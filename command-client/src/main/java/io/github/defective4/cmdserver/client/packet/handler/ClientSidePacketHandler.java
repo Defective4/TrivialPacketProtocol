@@ -18,11 +18,6 @@ public class ClientSidePacketHandler extends PacketHandler {
     }
 
     @PacketReceiver
-    public void onResponse(CommandResponsePacket e) {
-        client.getListeners().forEach(ls -> ls.responseReceived(e.getData()));
-    }
-
-    @PacketReceiver
     public void onCommand(CommandPacket packet) {
         client.getListeners().forEach(ls -> ls.commandReceived(packet.getCommand(), packet.getArguments()));
     }
@@ -39,5 +34,10 @@ public class ClientSidePacketHandler extends PacketHandler {
         if (id != client.getLastPingID()) client.disconnect("Received invalid keep-alive packet");
         client.setLastPingID(-1);
         client.getListeners().forEach(ls -> ls.serverPingReceived(id));
+    }
+
+    @PacketReceiver
+    public void onResponse(CommandResponsePacket e) {
+        client.getListeners().forEach(ls -> ls.responseReceived(e.getData()));
     }
 }

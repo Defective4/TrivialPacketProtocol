@@ -9,8 +9,8 @@ import io.github.defective4.cmdserver.common.packet.Packet;
 
 public class CommandPacket extends Packet {
 
-    private String command;
     private String[] arguments;
+    private String command;
 
     public CommandPacket(byte[] data) {
         super(data);
@@ -19,6 +19,14 @@ public class CommandPacket extends Packet {
 
     public CommandPacket(String command, String[] arguments) {
         super(mkBytes(command, arguments));
+    }
+
+    public String[] getArguments() {
+        return arguments;
+    }
+
+    public String getCommand() {
+        return command;
     }
 
     private void readBytes(byte[] data) {
@@ -44,14 +52,6 @@ public class CommandPacket extends Packet {
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
-    }
-
-    public String getCommand() {
-        return command;
-    }
-
-    public String[] getArguments() {
-        return arguments;
     }
 
 }

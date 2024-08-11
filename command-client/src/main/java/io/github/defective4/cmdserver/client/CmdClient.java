@@ -31,21 +31,21 @@ import io.github.defective4.cmdserver.common.ssl.SSLManager;
 
 public class CmdClient implements AutoCloseable {
 
+    private final Certificate cert;
     private boolean connected = false;
     private final ClientSidePacketHandler handler = new ClientSidePacketHandler(this);
-    private final String host;
 
+    private final String host;
     private DataInputStream is;
     private long lastPingID = -1;
     private final List<ClientListener> listeners = new CopyOnWriteArrayList<>();
-    private DataOutputStream os;
 
+    private DataOutputStream os;
     private final Timer pingTimer = new Timer(true);
     private final int port;
-    private final Socket socket;
 
+    private final Socket socket;
     private final char[] token;
-    private final Certificate cert;
 
     public CmdClient(String host, int port, char[] token) throws IOException {
         this(host, port, token, null);
@@ -57,7 +57,8 @@ public class CmdClient implements AutoCloseable {
         this.host = host;
         this.port = port;
         try {
-            socket = cert == null ? new Socket() : SSLManager.mkSSLContext(cert, null).getSocketFactory().createSocket();
+            socket = cert == null ? new Socket()
+                    : SSLManager.mkSSLContext(cert, null).getSocketFactory().createSocket();
         } catch (
                 UnrecoverableKeyException |
                 KeyManagementException |
@@ -76,14 +77,6 @@ public class CmdClient implements AutoCloseable {
     @Override
     public void close() throws IOException {
         socket.close();
-    }
-
-    public void sendCommand(String command, String... arguments) throws IOException {
-        sendPacket(new CommandPacket(command, arguments));
-    }
-
-    public void respond(byte[] data) throws IOException {
-        sendPacket(new CommandResponsePacket(data));
     }
 
     public void connect() throws Exception {
@@ -149,6 +142,14 @@ public class CmdClient implements AutoCloseable {
 
     public boolean isConnected() {
         return connected;
+    }
+
+    public void respond(byte[] data) throws IOException {
+        sendPacket(new CommandResponsePacket(data));
+    }
+
+    public void sendCommand(String command, String... arguments) throws IOException {
+        sendPacket(new CommandPacket(command, arguments));
     }
 
     public void sendPacket(Packet packet) throws IOException {

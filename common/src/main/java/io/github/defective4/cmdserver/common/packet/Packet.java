@@ -20,16 +20,14 @@ public class Packet {
         str.write(data);
     }
 
-    @SuppressWarnings("cast")
     public static Packet readFromStream(DataInputStream isr) throws IOException {
         byte[] data = new byte[isr.readInt()];
         isr.readFully(data);
         Class<? extends Packet> packetClass = PacketRegistry.getPacketForID(data[0]);
         if (packetClass == null) throw new IOException("Unknown packet: 0x" + Integer.toHexString(data[0] & 0xFF));
         try {
-            return packetClass
-                    .getConstructor(byte[].class)
-                    .newInstance((Object) Arrays.copyOfRange(data, 1, data.length));
+            Object copy = Arrays.copyOfRange(data, 1, data.length);
+            return packetClass.getConstructor(byte[].class).newInstance(copy);
         } catch (Exception e) {
             throw new IOException(e);
         }

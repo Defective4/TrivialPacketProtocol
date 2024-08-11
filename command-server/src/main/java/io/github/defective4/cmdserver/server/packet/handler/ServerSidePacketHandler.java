@@ -21,11 +21,6 @@ public class ServerSidePacketHandler extends PacketHandler {
     }
 
     @PacketReceiver
-    public void onResponse(CommandResponsePacket e) {
-        server.getListeners().forEach(ls -> ls.responseReceived(connection, e.getData()));
-    }
-
-    @PacketReceiver
     public void onCommand(CommandPacket e) {
         server.getListeners().forEach(ls -> ls.commandReceived(connection, e.getCommand(), e.getArguments()));
     }
@@ -39,5 +34,10 @@ public class ServerSidePacketHandler extends PacketHandler {
     public void onPing(PingPacket e) throws IOException {
         server.getListeners().forEach(ls -> ls.clientPinged(e.getId()));
         connection.sendPacket(new PingPacket(e.getId()));
+    }
+
+    @PacketReceiver
+    public void onResponse(CommandResponsePacket e) {
+        server.getListeners().forEach(ls -> ls.responseReceived(connection, e.getData()));
     }
 }

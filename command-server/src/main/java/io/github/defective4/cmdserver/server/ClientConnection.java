@@ -30,17 +30,17 @@ public class ClientConnection implements AutoCloseable {
         handler = new ServerSidePacketHandler(this, server);
     }
 
+    @Override
+    public void close() throws IOException {
+        socket.close();
+    }
+
     public InetAddress getInetAddress() {
         return socket.getInetAddress();
     }
 
     public int getPort() {
         return socket.getPort();
-    }
-
-    @Override
-    public void close() throws IOException {
-        socket.close();
     }
 
     public void handle() throws Exception {
@@ -61,16 +61,16 @@ public class ClientConnection implements AutoCloseable {
         }
     }
 
-    public void sendPacket(Packet packet) throws IOException {
-        packet.writeToStream(os);
+    public void respond(byte[] data) throws IOException {
+        sendPacket(new CommandResponsePacket(data));
     }
 
     public void sendCommand(String command, String... args) throws IOException {
         sendPacket(new CommandPacket(command, args));
     }
 
-    public void respond(byte[] data) throws IOException {
-        sendPacket(new CommandResponsePacket(data));
+    public void sendPacket(Packet packet) throws IOException {
+        packet.writeToStream(os);
     }
 
 }
