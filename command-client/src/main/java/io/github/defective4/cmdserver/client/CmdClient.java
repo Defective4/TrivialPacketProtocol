@@ -6,6 +6,12 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Timer;
@@ -21,6 +27,7 @@ import io.github.defective4.cmdserver.common.packet.twoway.CommandPacket;
 import io.github.defective4.cmdserver.common.packet.twoway.CommandResponsePacket;
 import io.github.defective4.cmdserver.common.packet.twoway.DisconnectPacket;
 import io.github.defective4.cmdserver.common.packet.twoway.PingPacket;
+import io.github.defective4.cmdserver.common.ssl.SSLManager;
 
 public class CmdClient implements AutoCloseable {
 
@@ -38,12 +45,28 @@ public class CmdClient implements AutoCloseable {
     private final Socket socket;
 
     private final char[] token;
+    private final Certificate cert;
 
-    public CmdClient(String host, int port, char[] token) {
+    public CmdClient(String host, int port, char[] token) throws IOException {
+        this(host, port, token, null);
+    }
+
+    public CmdClient(String host, int port, char[] token, Certificate cert) throws IOException {
         this.token = token;
-        socket = new Socket();
+        this.cert = cert;
         this.host = host;
         this.port = port;
+        try {
+            socket = cert == null ? new Socket() : SSLManager.mkSSLContext(cert, null).getSocketFactory().createSocket();
+        } catch (
+                UnrecoverableKeyException |
+                KeyManagementException |
+                KeyStoreException |
+                NoSuchAlgorithmException |
+                CertificateException e) {
+            throw new IOException(e);
+        }
+
     }
 
     public void addListener(ClientListener listener) {
@@ -58,7 +81,7 @@ public class CmdClient implements AutoCloseable {
     public void sendCommand(String command, String... arguments) throws IOException {
         sendPacket(new CommandPacket(command, arguments));
     }
-    
+
     public void respond(byte[] data) throws IOException {
         sendPacket(new CommandResponsePacket(data));
     }
