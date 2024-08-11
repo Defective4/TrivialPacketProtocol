@@ -2,7 +2,7 @@ package io.github.defective4.cmdserver.common.event;
 
 import io.github.defective4.cmdserver.common.packet.twoway.DisconnectPacket;
 
-public class ClientAdapter implements ClientListener {
+public abstract class ClientAdapter implements ClientListener {
 
     @Override
     public void authorized() {}
