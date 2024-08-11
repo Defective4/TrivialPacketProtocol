@@ -4,6 +4,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.InetAddress;
 import java.net.Socket;
 
 import io.github.defective4.cmdserver.common.packet.Packet;
@@ -25,6 +26,14 @@ public class ClientConnection implements AutoCloseable {
         is = new DataInputStream(socket.getInputStream());
         this.server = server;
         handler = new ServerSidePacketHandler(this, server);
+    }
+
+    public InetAddress getInetAddress() {
+        return socket.getInetAddress();
+    }
+
+    public int getPort() {
+        return socket.getPort();
     }
 
     @Override
