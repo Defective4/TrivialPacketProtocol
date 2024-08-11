@@ -19,4 +19,7 @@ public abstract class ClientAdapter implements ClientListener {
     @Override
     public void commandReceived(String command, String[] args) {}
 
+    @Override
+    public void responseReceived(byte[] data) {}
+
 }

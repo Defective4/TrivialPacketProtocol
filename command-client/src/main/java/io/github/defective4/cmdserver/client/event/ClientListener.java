@@ -12,4 +12,6 @@ public interface ClientListener {
     void serverPingReceived(long id);
     
     void commandReceived(String command, String[] args);
+    
+    void responseReceived(byte[] data);
 }

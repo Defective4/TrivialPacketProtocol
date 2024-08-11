@@ -18,6 +18,7 @@ import io.github.defective4.cmdserver.common.packet.Packet;
 import io.github.defective4.cmdserver.common.packet.client.AuthPacket;
 import io.github.defective4.cmdserver.common.packet.server.AuthSuccessPacket;
 import io.github.defective4.cmdserver.common.packet.twoway.CommandPacket;
+import io.github.defective4.cmdserver.common.packet.twoway.CommandResponsePacket;
 import io.github.defective4.cmdserver.common.packet.twoway.DisconnectPacket;
 import io.github.defective4.cmdserver.common.packet.twoway.PingPacket;
 
@@ -56,6 +57,10 @@ public class CmdClient implements AutoCloseable {
 
     public void sendCommand(String command, String... arguments) throws IOException {
         sendPacket(new CommandPacket(command, arguments));
+    }
+    
+    public void respond(byte[] data) throws IOException {
+        sendPacket(new CommandResponsePacket(data));
     }
 
     public void connect() throws Exception {

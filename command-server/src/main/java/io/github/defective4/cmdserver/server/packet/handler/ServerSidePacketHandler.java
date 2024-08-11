@@ -5,6 +5,7 @@ import java.io.IOException;
 import io.github.defective4.cmdserver.common.packet.handler.PacketHandler;
 import io.github.defective4.cmdserver.common.packet.handler.PacketReceiver;
 import io.github.defective4.cmdserver.common.packet.twoway.CommandPacket;
+import io.github.defective4.cmdserver.common.packet.twoway.CommandResponsePacket;
 import io.github.defective4.cmdserver.common.packet.twoway.DisconnectPacket;
 import io.github.defective4.cmdserver.common.packet.twoway.PingPacket;
 import io.github.defective4.cmdserver.server.ClientConnection;
@@ -17,6 +18,11 @@ public class ServerSidePacketHandler extends PacketHandler {
     public ServerSidePacketHandler(ClientConnection connection, CmdServer server) {
         this.server = server;
         this.connection = connection;
+    }
+
+    @PacketReceiver
+    public void onResponse(CommandResponsePacket e) {
+        server.getListeners().forEach(ls -> ls.responseReceived(connection, e.getData()));
     }
 
     @PacketReceiver

@@ -10,4 +10,6 @@ public interface ServerListener {
     void clientAuthorized(ClientConnection connection);
 
     void commandReceived(ClientConnection connection, String command, String[] args);
+    
+    void responseReceived(ClientConnection connection, byte[] data);
 }
