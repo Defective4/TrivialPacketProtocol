@@ -1,6 +1,6 @@
-package io.github.defective4.cmdserver.common.event;
+package io.github.defective4.cmdserver.server.event;
 
-import io.github.defective4.cmdserver.common.ClientConnection;
+import io.github.defective4.cmdserver.server.ClientConnection;
 
 public abstract class ServerAdapter implements ServerListener {
 

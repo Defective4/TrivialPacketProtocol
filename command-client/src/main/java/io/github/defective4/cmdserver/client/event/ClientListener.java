@@ -1,4 +1,4 @@
-package io.github.defective4.cmdserver.common.event;
+package io.github.defective4.cmdserver.client.event;
 
 import io.github.defective4.cmdserver.common.packet.twoway.DisconnectPacket;
 

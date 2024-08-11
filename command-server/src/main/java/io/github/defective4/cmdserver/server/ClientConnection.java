@@ -1,4 +1,4 @@
-package io.github.defective4.cmdserver.common;
+package io.github.defective4.cmdserver.server;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -9,10 +9,10 @@ import java.net.Socket;
 
 import io.github.defective4.cmdserver.common.packet.Packet;
 import io.github.defective4.cmdserver.common.packet.client.AuthPacket;
-import io.github.defective4.cmdserver.common.packet.handler.ServerSidePacketHandler;
 import io.github.defective4.cmdserver.common.packet.server.AuthSuccessPacket;
 import io.github.defective4.cmdserver.common.packet.twoway.CommandPacket;
 import io.github.defective4.cmdserver.common.packet.twoway.DisconnectPacket;
+import io.github.defective4.cmdserver.server.packet.handler.ServerSidePacketHandler;
 
 public class ClientConnection implements AutoCloseable {
     private final ServerSidePacketHandler handler;

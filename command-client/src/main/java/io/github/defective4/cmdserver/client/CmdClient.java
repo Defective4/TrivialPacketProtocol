@@ -1,4 +1,4 @@
-package io.github.defective4.cmdserver.common;
+package io.github.defective4.cmdserver.client;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -12,10 +12,10 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import io.github.defective4.cmdserver.common.event.ClientListener;
+import io.github.defective4.cmdserver.client.event.ClientListener;
+import io.github.defective4.cmdserver.client.packet.handler.ClientSidePacketHandler;
 import io.github.defective4.cmdserver.common.packet.Packet;
 import io.github.defective4.cmdserver.common.packet.client.AuthPacket;
-import io.github.defective4.cmdserver.common.packet.handler.ClientSidePacketHandler;
 import io.github.defective4.cmdserver.common.packet.server.AuthSuccessPacket;
 import io.github.defective4.cmdserver.common.packet.twoway.CommandPacket;
 import io.github.defective4.cmdserver.common.packet.twoway.DisconnectPacket;

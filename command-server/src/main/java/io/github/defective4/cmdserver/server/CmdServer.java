@@ -1,4 +1,4 @@
-package io.github.defective4.cmdserver.common;
+package io.github.defective4.cmdserver.server;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -8,7 +8,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import io.github.defective4.cmdserver.common.event.ServerListener;
+import io.github.defective4.cmdserver.server.event.ServerListener;
 
 public class CmdServer implements AutoCloseable {
 

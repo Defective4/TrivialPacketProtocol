@@ -1,12 +1,14 @@
-package io.github.defective4.cmdserver.common.packet.handler;
+package io.github.defective4.cmdserver.server.packet.handler;
 
 import java.io.IOException;
 
-import io.github.defective4.cmdserver.common.ClientConnection;
-import io.github.defective4.cmdserver.common.CmdServer;
+import io.github.defective4.cmdserver.common.packet.handler.PacketHandler;
+import io.github.defective4.cmdserver.common.packet.handler.PacketReceiver;
 import io.github.defective4.cmdserver.common.packet.twoway.CommandPacket;
 import io.github.defective4.cmdserver.common.packet.twoway.DisconnectPacket;
 import io.github.defective4.cmdserver.common.packet.twoway.PingPacket;
+import io.github.defective4.cmdserver.server.ClientConnection;
+import io.github.defective4.cmdserver.server.CmdServer;
 
 public class ServerSidePacketHandler extends PacketHandler {
     private final ClientConnection connection;

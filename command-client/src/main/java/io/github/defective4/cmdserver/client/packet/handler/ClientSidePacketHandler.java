@@ -1,8 +1,10 @@
-package io.github.defective4.cmdserver.common.packet.handler;
+package io.github.defective4.cmdserver.client.packet.handler;
 
 import java.io.IOException;
 
-import io.github.defective4.cmdserver.common.CmdClient;
+import io.github.defective4.cmdserver.client.CmdClient;
+import io.github.defective4.cmdserver.common.packet.handler.PacketHandler;
+import io.github.defective4.cmdserver.common.packet.handler.PacketReceiver;
 import io.github.defective4.cmdserver.common.packet.twoway.CommandPacket;
 import io.github.defective4.cmdserver.common.packet.twoway.DisconnectPacket;
 import io.github.defective4.cmdserver.common.packet.twoway.PingPacket;
