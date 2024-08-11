@@ -16,4 +16,7 @@ public abstract class ClientAdapter implements ClientListener {
     @Override
     public void serverPingReceived(long id) {}
 
+    @Override
+    public void commandReceived(String command, String[] args) {}
+
 }

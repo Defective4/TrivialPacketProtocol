@@ -55,7 +55,6 @@ public class CmdClient implements AutoCloseable {
     }
 
     public void sendCommand(String command, String... arguments) throws IOException {
-        if (!connected) throw new IllegalStateException("Not connected");
         sendPacket(new CommandPacket(command, arguments));
     }
 

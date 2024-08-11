@@ -3,6 +3,7 @@ package io.github.defective4.cmdserver.common.packet.handler;
 import java.io.IOException;
 
 import io.github.defective4.cmdserver.common.CmdClient;
+import io.github.defective4.cmdserver.common.packet.twoway.CommandPacket;
 import io.github.defective4.cmdserver.common.packet.twoway.DisconnectPacket;
 import io.github.defective4.cmdserver.common.packet.twoway.PingPacket;
 
@@ -11,6 +12,11 @@ public class ClientSidePacketHandler extends PacketHandler {
 
     public ClientSidePacketHandler(CmdClient client) {
         this.client = client;
+    }
+
+    @PacketReceiver
+    public void onCommand(CommandPacket packet) {
+        client.getListeners().forEach(ls -> ls.commandReceived(packet.getCommand(), packet.getArguments()));
     }
 
     @PacketReceiver

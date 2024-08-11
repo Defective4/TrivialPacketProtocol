@@ -19,7 +19,7 @@ public class ServerSidePacketHandler extends PacketHandler {
 
     @PacketReceiver
     public void onCommand(CommandPacket e) {
-        server.getListeners().forEach(ls -> ls.commandReceived(e.getCommand(), e.getArguments()));
+        server.getListeners().forEach(ls -> ls.commandReceived(connection, e.getCommand(), e.getArguments()));
     }
 
     @PacketReceiver

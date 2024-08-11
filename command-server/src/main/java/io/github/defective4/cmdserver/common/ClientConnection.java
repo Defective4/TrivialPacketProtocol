@@ -11,6 +11,7 @@ import io.github.defective4.cmdserver.common.packet.Packet;
 import io.github.defective4.cmdserver.common.packet.client.AuthPacket;
 import io.github.defective4.cmdserver.common.packet.handler.ServerSidePacketHandler;
 import io.github.defective4.cmdserver.common.packet.server.AuthSuccessPacket;
+import io.github.defective4.cmdserver.common.packet.twoway.CommandPacket;
 import io.github.defective4.cmdserver.common.packet.twoway.DisconnectPacket;
 
 public class ClientConnection implements AutoCloseable {
@@ -61,6 +62,10 @@ public class ClientConnection implements AutoCloseable {
 
     public void sendPacket(Packet packet) throws IOException {
         packet.writeToStream(os);
+    }
+
+    public void sendCommand(String command, String... args) throws IOException {
+        sendPacket(new CommandPacket(command, args));
     }
 
 }

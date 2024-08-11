@@ -10,4 +10,6 @@ public interface ClientListener {
     void serverPinged(long id);
 
     void serverPingReceived(long id);
+    
+    void commandReceived(String command, String[] args);
 }
