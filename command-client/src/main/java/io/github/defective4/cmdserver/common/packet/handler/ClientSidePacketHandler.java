@@ -22,7 +22,7 @@ public class ClientSidePacketHandler extends PacketHandler {
     @PacketReceiver
     public void onPing(PingPacket e) throws IOException {
         long id = e.getId();
-        if (id != client.getLastPingID()) client.disconnect("Otrzymano nieprawidłowy keep-alive");
+        if (id != client.getLastPingID()) client.disconnect("Received invalid keep-alive packet");
         client.setLastPingID(-1);
         client.getListeners().forEach(ls -> ls.serverPingReceived(id));
     }

@@ -34,10 +34,10 @@ public class ClientConnection implements AutoCloseable {
 
     public void handle() throws Exception {
         if (!(Packet.readFromStream(is) instanceof AuthPacket authPacket))
-            throw new IOException("Otrzymano nieprawidłowy pierwszy pakiet");
+            throw new IOException("Invalid auth packet received");
         if (!new String(server.getToken()).equals(new String(authPacket.getToken()))) {
-            sendPacket(new DisconnectPacket("Otrzymano nieprawidłowy token", false));
-            throw new IOException("Otrzymano nieprawidłowy token od klienta!");
+            sendPacket(new DisconnectPacket("Received invalid token"));
+            throw new IOException("Received invalid token");
         }
         sendPacket(new AuthSuccessPacket());
         while (!socket.isClosed()) {

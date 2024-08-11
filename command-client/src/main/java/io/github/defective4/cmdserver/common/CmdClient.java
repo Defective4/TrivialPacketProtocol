@@ -62,10 +62,10 @@ public class CmdClient implements AutoCloseable {
         sendPacket(new AuthPacket(token));
         Packet authResponse = Packet.readFromStream(is);
         if (authResponse instanceof DisconnectPacket disconnectPacket) {
-            throw new IOException("Serwer odrzucił połączenie: " + disconnectPacket.getReason());
+            throw new IOException("Server rejected the connection: " + disconnectPacket.getReason());
         }
         if (!(authResponse instanceof AuthSuccessPacket)) {
-            throw new IOException("Otrzymano nieprawidłowy pakiet podczas logowania: " + authResponse);
+            throw new IOException("Received invalid packet during authentication: " + authResponse);
         }
         listeners.forEach(ClientListener::authorized);
         pingTimer.scheduleAtFixedRate(new TimerTask() {
@@ -87,7 +87,7 @@ public class CmdClient implements AutoCloseable {
                     } catch (IOException e1) {}
                 }
             }
-        }, 0, 1000);
+        }, 0, 15000);
         while (!socket.isClosed()) {
             try {
                 handler.handle(Packet.readFromStream(is));
@@ -98,7 +98,7 @@ public class CmdClient implements AutoCloseable {
     }
 
     public void disconnect(String reason) throws IOException {
-        sendPacket(new DisconnectPacket(reason, false));
+        sendPacket(new DisconnectPacket(reason));
         close();
     }
 

@@ -18,7 +18,7 @@ public class ServerSidePacketHandler extends PacketHandler {
 
     @PacketReceiver
     public void onDisconnect(DisconnectPacket e) throws IOException {
-        throw new IOException("Klient zakończył transmisję: " + e.getReason());
+        throw new IOException("Client has disconnected: " + e.getReason());
     }
 
     @PacketReceiver
