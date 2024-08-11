@@ -13,4 +13,7 @@ public abstract class ServerAdapter implements ServerListener {
     @Override
     public void clientAuthorized(ClientConnection connection) {}
 
+    @Override
+    public void commandReceived(String command, String[] args) {}
+
 }

@@ -17,6 +17,7 @@ import io.github.defective4.cmdserver.common.packet.Packet;
 import io.github.defective4.cmdserver.common.packet.client.AuthPacket;
 import io.github.defective4.cmdserver.common.packet.handler.ClientSidePacketHandler;
 import io.github.defective4.cmdserver.common.packet.server.AuthSuccessPacket;
+import io.github.defective4.cmdserver.common.packet.twoway.CommandPacket;
 import io.github.defective4.cmdserver.common.packet.twoway.DisconnectPacket;
 import io.github.defective4.cmdserver.common.packet.twoway.PingPacket;
 
@@ -51,6 +52,11 @@ public class CmdClient implements AutoCloseable {
     @Override
     public void close() throws IOException {
         socket.close();
+    }
+
+    public void sendCommand(String command, String... arguments) throws IOException {
+        if (!connected) throw new IllegalStateException("Not connected");
+        sendPacket(new CommandPacket(command, arguments));
     }
 
     public void connect() throws Exception {
