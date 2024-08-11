@@ -7,4 +7,5 @@ public interface ServerListener {
 
     void clientPinged(long id);
 
+    void clientAuthorized(ClientConnection connection);
 }

@@ -40,6 +40,7 @@ public class ClientConnection implements AutoCloseable {
             throw new IOException("Received invalid token");
         }
         sendPacket(new AuthSuccessPacket());
+        server.getListeners().forEach(ls -> ls.clientAuthorized(this));
         while (!socket.isClosed()) {
             try {
                 handler.handle(Packet.readFromStream(is));

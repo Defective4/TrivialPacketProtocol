@@ -10,4 +10,7 @@ public abstract class ServerAdapter implements ServerListener {
     @Override
     public void clientPinged(long id) {}
 
+    @Override
+    public void clientAuthorized(ClientConnection connection) {}
+
 }
