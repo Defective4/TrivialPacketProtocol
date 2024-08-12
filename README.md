@@ -1,5 +1,5 @@
 # Trivial Packet Protocol
-[About](#About) | [Installation](#Installation) | [Usage](#Usage)
+[About](#about) | [Installation](#installation) | [Usage](#usage)
 
 ## About
 Trivial Packet Protocol is a client and server library, allowing you to send binary data in the form of packets over network.  
