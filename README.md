@@ -38,6 +38,13 @@ If the client does not receive a `Ping` response before sending the next `Ping` 
 Currently the only requirement to use the library is Java 17
 
 ## Installation
+### From Maven
+*Soon™* - waiting for publishing to maven central
+
+### From releases
+You can download the common, client and/or server jars from [Releases](https://github.com/Defective4/TrivialPacketProtocol/releases/latest) 
+page and include them manually in your build path
+
 ### From source
 0. Make sure you have `git` and `maven` installed
 1. `git clone https://github.com/Defective4/TrivialPacketProtocol.git`
@@ -49,10 +56,6 @@ The compiled binaries will now be available in:
 - Server: `packet-server/target`  
 
 Just include them in your classpath and you are good to go!
-
-### From Maven
-*Soon™* - waiting for publishing to maven central
-
 
 ## Usage
 For more examples see [Examples](examples/src/main/java/io/github/defective4/trivialpacket/examples/).  
