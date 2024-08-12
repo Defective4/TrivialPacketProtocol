@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -187,6 +188,8 @@ public class CmdServer implements AutoCloseable {
      * To interact with connected clients use {@link ServerListener}
      *
      * @throws IOException           if there was an error starting the server
+     * @throws SocketException       if there was an error binding, or after calling
+     *                               {@link #close()}
      * @throws IllegalStateException if the server is already bound
      */
     public void start() throws IOException {

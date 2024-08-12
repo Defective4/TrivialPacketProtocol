@@ -177,7 +177,7 @@ public class CmdClient implements AutoCloseable {
             throw new IOException("Received invalid packet during authentication: " + authResponse);
         }
         for (ClientListener ls : listeners) ls.authorized();
-        pingTimer.scheduleAtFixedRate(new TimerTask() {
+        if (!socket.isClosed()) pingTimer.scheduleAtFixedRate(new TimerTask() {
 
             @Override
             public void run() {
