@@ -10,6 +10,7 @@ import io.github.defective4.cmdserver.common.packet.twoway.DisconnectPacket;
 import io.github.defective4.cmdserver.common.packet.twoway.PingPacket;
 import io.github.defective4.cmdserver.server.ClientConnection;
 import io.github.defective4.cmdserver.server.CmdServer;
+import io.github.defective4.cmdserver.server.event.ServerListener;
 
 public class ServerSidePacketHandler extends PacketHandler {
     private final ClientConnection connection;
@@ -21,8 +22,9 @@ public class ServerSidePacketHandler extends PacketHandler {
     }
 
     @PacketReceiver
-    public void onCommand(CommandPacket e) {
-        server.getListeners().forEach(ls -> ls.commandReceived(connection, e.getCommand(), e.getArguments()));
+    public void onCommand(CommandPacket e) throws Exception {
+        for (ServerListener ls : server.getListeners())
+            ls.commandReceived(connection, e.getCommand(), e.getArguments());
     }
 
     @PacketReceiver
@@ -31,13 +33,13 @@ public class ServerSidePacketHandler extends PacketHandler {
     }
 
     @PacketReceiver
-    public void onPing(PingPacket e) throws IOException {
-        server.getListeners().forEach(ls -> ls.clientPinged(e.getId()));
+    public void onPing(PingPacket e) throws Exception {
+        for (ServerListener ls : server.getListeners()) ls.clientPinged(e.getId());
         connection.sendPacket(new PingPacket(e.getId()));
     }
 
     @PacketReceiver
-    public void onResponse(CommandResponsePacket e) {
-        server.getListeners().forEach(ls -> ls.responseReceived(connection, e.getData()));
+    public void onResponse(CommandResponsePacket e) throws Exception {
+        for (ServerListener ls : server.getListeners()) ls.responseReceived(connection, e.getData());
     }
 }

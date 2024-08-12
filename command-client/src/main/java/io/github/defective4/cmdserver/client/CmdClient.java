@@ -29,6 +29,29 @@ import io.github.defective4.cmdserver.common.packet.twoway.DisconnectPacket;
 import io.github.defective4.cmdserver.common.packet.twoway.PingPacket;
 import io.github.defective4.cmdserver.common.ssl.SSLManager;
 
+/**
+ * The main client class.<br>
+ * It's used to connect and exchange data with a CmdServer instance.<br>
+ * 
+ * Example usage:
+ * 
+ * <pre>
+ * char[] token = "TOKEN".toCharArray();
+ * try (CmdClient client = new CmdClient("localhost", 7561, token)) {
+ *     client.addListener(new ClientAdapter() {
+ * 
+ *         @Override
+ *         public void authorized() {
+ *             // Do something after authorized
+ *         }
+ * 
+ *     });
+ *     client.connect();
+ * } catch (Exception e) {
+ *     e.printStackTrace();
+ * }
+ * </pre>
+ */
 public class CmdClient implements AutoCloseable {
 
     private final Certificate cert;
@@ -93,7 +116,7 @@ public class CmdClient implements AutoCloseable {
         if (!(authResponse instanceof AuthSuccessPacket)) {
             throw new IOException("Received invalid packet during authentication: " + authResponse);
         }
-        listeners.forEach(ClientListener::authorized);
+        for (ClientListener ls : listeners) ls.authorized();
         pingTimer.scheduleAtFixedRate(new TimerTask() {
 
             @Override
@@ -105,8 +128,8 @@ public class CmdClient implements AutoCloseable {
                     }
                     lastPingID = System.currentTimeMillis();
                     sendPacket(new PingPacket(lastPingID));
-                    listeners.forEach(ls -> ls.serverPinged(lastPingID));
-                } catch (IOException e) {
+                    for (ClientListener ls : listeners) ls.serverPinged(lastPingID);
+                } catch (Exception e) {
                     cancel();
                     try {
                         close();

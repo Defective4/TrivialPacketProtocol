@@ -58,7 +58,7 @@ public class CmdServer implements AutoCloseable {
         server.bind(new InetSocketAddress(port));
         while (!isClosed()) {
             try (ClientConnection client = new ClientConnection(server.accept(), this)) {
-                listeners.forEach(ls -> ls.clientConnected(client));
+                for (ServerListener ls : listeners) ls.clientConnected(client);
                 client.handle();
             } catch (SocketException e) {} catch (Exception e) {
                 e.printStackTrace();

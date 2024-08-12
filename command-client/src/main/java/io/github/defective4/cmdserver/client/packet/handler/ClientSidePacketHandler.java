@@ -1,8 +1,7 @@
 package io.github.defective4.cmdserver.client.packet.handler;
 
-import java.io.IOException;
-
 import io.github.defective4.cmdserver.client.CmdClient;
+import io.github.defective4.cmdserver.client.event.ClientListener;
 import io.github.defective4.cmdserver.common.packet.handler.PacketHandler;
 import io.github.defective4.cmdserver.common.packet.handler.PacketReceiver;
 import io.github.defective4.cmdserver.common.packet.twoway.CommandPacket;
@@ -18,26 +17,26 @@ public class ClientSidePacketHandler extends PacketHandler {
     }
 
     @PacketReceiver
-    public void onCommand(CommandPacket packet) {
-        client.getListeners().forEach(ls -> ls.commandReceived(packet.getCommand(), packet.getArguments()));
+    public void onCommand(CommandPacket packet) throws Exception {
+        for (ClientListener ls : client.getListeners()) ls.commandReceived(packet.getCommand(), packet.getArguments());
     }
 
     @PacketReceiver
-    public void onDisconnect(DisconnectPacket packet) throws IOException {
-        client.getListeners().forEach(ls -> ls.disconnected(packet));
+    public void onDisconnect(DisconnectPacket packet) throws Exception {
+        for (ClientListener ls : client.getListeners()) ls.disconnected(packet);
         client.close();
     }
 
     @PacketReceiver
-    public void onPing(PingPacket e) throws IOException {
+    public void onPing(PingPacket e) throws Exception {
         long id = e.getId();
         if (id != client.getLastPingID()) client.disconnect("Received invalid keep-alive packet");
         client.setLastPingID(-1);
-        client.getListeners().forEach(ls -> ls.serverPingReceived(id));
+        for (ClientListener ls : client.getListeners()) ls.serverPingReceived(id);
     }
 
     @PacketReceiver
-    public void onResponse(CommandResponsePacket e) {
-        client.getListeners().forEach(ls -> ls.responseReceived(e.getData()));
+    public void onResponse(CommandResponsePacket e) throws Exception {
+        for (ClientListener ls : client.getListeners()) ls.responseReceived(e.getData());
     }
 }

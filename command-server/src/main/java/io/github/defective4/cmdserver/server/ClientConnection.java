@@ -13,6 +13,7 @@ import io.github.defective4.cmdserver.common.packet.server.AuthSuccessPacket;
 import io.github.defective4.cmdserver.common.packet.twoway.CommandPacket;
 import io.github.defective4.cmdserver.common.packet.twoway.CommandResponsePacket;
 import io.github.defective4.cmdserver.common.packet.twoway.DisconnectPacket;
+import io.github.defective4.cmdserver.server.event.ServerListener;
 import io.github.defective4.cmdserver.server.packet.handler.ServerSidePacketHandler;
 
 public class ClientConnection implements AutoCloseable {
@@ -51,7 +52,7 @@ public class ClientConnection implements AutoCloseable {
             throw new IOException("Received invalid token");
         }
         sendPacket(new AuthSuccessPacket());
-        server.getListeners().forEach(ls -> ls.clientAuthorized(this));
+        for (ServerListener ls : server.getListeners()) ls.clientAuthorized(this);
         while (!socket.isClosed()) {
             try {
                 handler.handle(Packet.readFromStream(is));
