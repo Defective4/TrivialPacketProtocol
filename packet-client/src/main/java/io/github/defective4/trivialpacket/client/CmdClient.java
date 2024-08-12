@@ -143,6 +143,8 @@ public class CmdClient implements AutoCloseable {
 
     @Override
     public void close() throws IOException {
+        pingTimer.cancel();
+        pingTimer.purge();
         socket.close();
     }
 

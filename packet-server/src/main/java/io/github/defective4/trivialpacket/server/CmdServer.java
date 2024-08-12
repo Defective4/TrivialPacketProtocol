@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -121,6 +120,7 @@ public class CmdServer implements AutoCloseable {
 
     @Override
     public void close() throws IOException {
+        pool.shutdownNow();
         server.close();
     }
 
@@ -196,11 +196,15 @@ public class CmdServer implements AutoCloseable {
         while (!isClosed()) {
             Socket socket = server.accept();
             pool.submit(() -> {
+                ClientConnection local = null;
                 try (ClientConnection client = new ClientConnection(socket, this)) {
+                    local = client;
                     for (ServerListener ls : listeners) ls.clientConnected(client);
                     client.handle();
-                } catch (SocketException e) {} catch (Exception e) {
-                    e.printStackTrace();
+                } catch (Exception e) {} finally {
+                    for (ServerListener ls : listeners) try {
+                        ls.clientDisconnected(local);
+                    } catch (Exception e) {}
                 }
             });
         }
