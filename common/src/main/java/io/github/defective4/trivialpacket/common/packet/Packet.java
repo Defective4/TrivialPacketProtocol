@@ -21,22 +21,38 @@ public abstract class Packet {
 
     private final int id;
 
+    /**
+     * Constructs a new packet. <br>
+     * The packet has to be registered in {@link PacketFactoryRegistry} before
+     * construction.
+     */
     protected Packet() {
         try {
-            id = PacketRegistry.getIDForPacketClass(getClass());
+            id = PacketFactoryRegistry.getIDForPacketClass(getClass());
         } catch (Exception e) {
             throw new IllegalStateException("Packet " + getClass().getName() + " not registered");
         }
     }
 
+    /**
+     * Get this packet's ID
+     *
+     * @return packet ID
+     */
     public int getId() {
         return id;
     }
 
+    /**
+     * Write this packet to the output stream
+     *
+     * @param  str         output stream
+     * @throws IOException thrown if there was an error writing to the output stream
+     */
     public void writeToStream(DataOutputStream str) throws IOException {
         try (ByteArrayOutputStream buffer = new ByteArrayOutputStream();
                 DataOutputStream wrapper = new DataOutputStream(buffer)) {
-            writePacket(wrapper);
+            writePacketData(wrapper);
             byte[] rawData = buffer.toByteArray();
             str.writeInt(rawData.length + 1);
             str.writeByte(id);
@@ -44,14 +60,28 @@ public abstract class Packet {
         }
     }
 
-    protected abstract void writePacket(DataOutputStream str) throws IOException;
+    /**
+     * Write packet data to the output buffer
+     *
+     * @param  buffer      buffer stream
+     * @throws IOException
+     */
+    protected abstract void writePacketData(DataOutputStream buffer) throws IOException;
 
-    public static Packet readFromStream(DataInputStream isr) throws Exception {
-        int length = isr.readInt();
-        byte id = isr.readByte();
+    /**
+     * Reads a packet from the input stream
+     *
+     * @param  is        input stream to read from
+     * @return           read packet, or <code>null</code> if the packet was not
+     *                   recognized
+     * @throws Exception if there was an error reading packet
+     */
+    public static Packet readFromStream(DataInputStream is) throws Exception {
+        int length = is.readInt();
+        byte id = is.readByte();
         byte[] data = new byte[length - 1];
-        isr.readFully(data);
-        PacketFactory<?> factory = PacketRegistry.getFactoryForID(id);
+        is.readFully(data);
+        PacketFactory<?> factory = PacketFactoryRegistry.getFactoryForID(id);
         return factory == null ? null : factory.createPacket(data);
     }
 }

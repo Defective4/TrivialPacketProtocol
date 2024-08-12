@@ -7,7 +7,7 @@ import io.github.defective4.trivialpacket.client.CmdClient;
 import io.github.defective4.trivialpacket.client.event.ClientAdapter;
 import io.github.defective4.trivialpacket.common.packet.Packet;
 import io.github.defective4.trivialpacket.common.packet.PacketFactory;
-import io.github.defective4.trivialpacket.common.packet.PacketRegistry;
+import io.github.defective4.trivialpacket.common.packet.PacketFactoryRegistry;
 import io.github.defective4.trivialpacket.server.ClientConnection;
 import io.github.defective4.trivialpacket.server.CmdServer;
 import io.github.defective4.trivialpacket.server.event.ServerAdapter;
@@ -35,7 +35,7 @@ public class CustomPacketExample {
         }
 
         @Override
-        protected void writePacket(DataOutputStream str) throws IOException {
+        protected void writePacketData(DataOutputStream str) throws IOException {
             str.write(string.getBytes());
         }
 
@@ -43,7 +43,7 @@ public class CustomPacketExample {
 
     public static void main(String[] args) {
         try {
-            PacketRegistry.registerPacketFactory(6, ExamplePacket.FACTORY);
+            PacketFactoryRegistry.registerPacketFactory(6, ExamplePacket.FACTORY);
 
             CmdServer server = new CmdServer("localhost", 8083, null);
             server.addListener(new ServerAdapter() {

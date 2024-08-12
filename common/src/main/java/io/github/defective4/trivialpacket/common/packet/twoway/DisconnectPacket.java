@@ -12,10 +12,10 @@ import io.github.defective4.trivialpacket.common.packet.PacketFactory;
  * Sent by both parties when they need to notify the receiver they are going to
  * close the connection
  */
+@SuppressWarnings("javadoc")
 public class DisconnectPacket extends Packet {
 
-    public static final PacketFactory<DisconnectPacket> FACTORY = new PacketFactory<>(
-            DisconnectPacket.class) {
+    public static final PacketFactory<DisconnectPacket> FACTORY = new PacketFactory<>(DisconnectPacket.class) {
 
         @Override
         protected DisconnectPacket createPacket(byte[] data) throws Exception {
@@ -25,7 +25,6 @@ public class DisconnectPacket extends Packet {
 
     private final String reason;
 
-    @SuppressWarnings("javadoc")
     public DisconnectPacket(String reason) {
         this.reason = reason;
     }
@@ -38,7 +37,7 @@ public class DisconnectPacket extends Packet {
     }
 
     @Override
-    protected void writePacket(DataOutputStream str) throws IOException {
+    protected void writePacketData(DataOutputStream str) throws IOException {
         str.write(reason.getBytes(StandardCharsets.UTF_8));
     }
 

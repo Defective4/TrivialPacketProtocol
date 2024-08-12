@@ -32,7 +32,7 @@ public class AuthPacket extends Packet {
     }
 
     @Override
-    protected void writePacket(DataOutputStream str) throws IOException {
+    protected void writePacketData(DataOutputStream str) throws IOException {
         str.write(new String(token).getBytes(StandardCharsets.UTF_8));
     }
 

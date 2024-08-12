@@ -4,13 +4,13 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 
 import io.github.defective4.trivialpacket.common.packet.Packet;
-import io.github.defective4.trivialpacket.common.packet.PacketRegistry;
+import io.github.defective4.trivialpacket.common.packet.PacketFactoryRegistry;
 
 @SuppressWarnings("javadoc")
 public abstract class PacketHandler {
 
     public void handle(Packet packet) throws Exception {
-        if (PacketRegistry.isBuiltIn(packet)) {
+        if (PacketFactoryRegistry.isBuiltIn(packet)) {
             for (Method m : getClass().getMethods()) if (m.isAnnotationPresent(PacketReceiver.class)) {
                 Parameter[] params = m.getParameters();
                 if (params.length == 1 && params[0].getType() == packet.getClass()) m.invoke(this, packet);

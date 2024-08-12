@@ -11,8 +11,7 @@ import io.github.defective4.trivialpacket.common.packet.PacketFactory;
 @SuppressWarnings("javadoc")
 public class AuthSuccessPacket extends Packet {
 
-    public static final PacketFactory<AuthSuccessPacket> FACTORY = new PacketFactory<>(
-            AuthSuccessPacket.class) {
+    public static final PacketFactory<AuthSuccessPacket> FACTORY = new PacketFactory<>(AuthSuccessPacket.class) {
 
         @Override
         protected AuthSuccessPacket createPacket(byte[] data) throws Exception {
@@ -21,6 +20,6 @@ public class AuthSuccessPacket extends Packet {
     };
 
     @Override
-    protected void writePacket(DataOutputStream str) {}
+    protected void writePacketData(DataOutputStream str) {}
 
 }

@@ -47,7 +47,7 @@ public class CommandPacket extends Packet {
     }
 
     @Override
-    protected void writePacket(DataOutputStream str) throws IOException {
+    protected void writePacketData(DataOutputStream str) throws IOException {
         str.writeUTF(command);
         str.writeInt(arguments.length);
         for (String arg : arguments) str.writeUTF(arg);

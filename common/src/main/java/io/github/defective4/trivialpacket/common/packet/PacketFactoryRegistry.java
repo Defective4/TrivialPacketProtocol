@@ -11,8 +11,14 @@ import io.github.defective4.trivialpacket.common.packet.twoway.CommandResponsePa
 import io.github.defective4.trivialpacket.common.packet.twoway.DisconnectPacket;
 import io.github.defective4.trivialpacket.common.packet.twoway.PingPacket;
 
-public class PacketRegistry {
-    public static boolean registeringDisabled, unregisteringDisabled;
+/**
+ * Packet registry stores packet factories required to create packets of
+ * different kinds. <br>
+ * It stores both built-in factories that cannot be modified, and user-defined
+ * ones.
+ */
+public class PacketFactoryRegistry {
+    private static boolean registeringDisabled, unregisteringDisabled;
     private static final Map<Integer, PacketFactory<?>> BUILTIN = Map
             .of(0, AuthPacket.FACTORY, 1, AuthSuccessPacket.FACTORY, 2, DisconnectPacket.FACTORY, 3, PingPacket.FACTORY,
                     4, CommandPacket.FACTORY, 5, CommandResponsePacket.FACTORY);
@@ -22,32 +28,44 @@ public class PacketRegistry {
         FACTORIES.putAll(BUILTIN);
     }
 
+    /**
+     * Disables registering of new packet factories. <br>
+     * This function exists for security reasons and cannot be reverted.
+     */
     public static void disableRegistering() {
         registeringDisabled = true;
     }
 
+    /**
+     * Disables unregistering of existing packet factories. <br>
+     * This function exists for security reasons and cannot be reverted.
+     */
     public static void disableUnregistering() {
         unregisteringDisabled = true;
     }
 
-    public static PacketFactory<?> getFactoryForID(int id) {
-        return FACTORIES.get(id);
-    }
-
-    public static int getIDForPacketClass(Class<? extends Packet> packetClass) {
-        return FACTORIES
-                .entrySet()
-                .stream()
-                .filter(val -> val.getValue().getPacketClass() == packetClass)
-                .findFirst()
-                .orElseThrow()
-                .getKey();
-    }
-
+    /**
+     * Checks if the packet instance is built-in.
+     *
+     * @param  packet packet to check
+     * @return        <code>true</code> if built-in
+     */
     public static boolean isBuiltIn(Packet packet) {
         return BUILTIN.containsKey(packet.getId());
     }
 
+    /**
+     * Registers a new factory. <br>
+     * IDs 0-5 are currently reserved for built-in packets and therefore cannot be
+     * overridden.
+     *
+     * @param  id                       packet id. Can't be less than 0
+     * @param  factory                  factory to register
+     * @throws IllegalStateException    if registering is disabled
+     * @throws IllegalArgumentException if id < 0, id is already used by another
+     *                                  packet or if the id belongs to a built-in
+     *                                  packet
+     */
     public static void registerPacketFactory(int id, PacketFactory<?> factory) {
         Objects.requireNonNull(factory);
         if (registeringDisabled) throw new IllegalStateException("Factory registering is disabled");
@@ -58,9 +76,34 @@ public class PacketRegistry {
         FACTORIES.put(id, factory);
     }
 
+    /**
+     * Unregisters an existing factory. <br>
+     * IDs 0-5 are currently reserved for built-in packets and therefore cannot be
+     * unregistered.
+     *
+     * @param  id                       packet ID
+     * @return                          <code>true</code> if there was a factory
+     *                                  under that ID
+     * @throws IllegalStateException    if unregistering is disabled
+     * @throws IllegalArgumentException if the ID belongs to a built-in packet
+     */
     public static boolean unregisterPacketFactory(int id) {
         if (unregisteringDisabled) throw new IllegalStateException("Factory unregistering is disabled");
         if (BUILTIN.containsKey(id)) throw new IllegalArgumentException("Can't unregister built-in packets");
         return FACTORIES.remove(id) != null;
+    }
+
+    static PacketFactory<?> getFactoryForID(int id) {
+        return FACTORIES.get(id);
+    }
+
+    static int getIDForPacketClass(Class<? extends Packet> packetClass) {
+        return FACTORIES
+                .entrySet()
+                .stream()
+                .filter(val -> val.getValue().getPacketClass() == packetClass)
+                .findFirst()
+                .orElseThrow()
+                .getKey();
     }
 }
