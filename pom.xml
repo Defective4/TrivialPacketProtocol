@@ -11,6 +11,14 @@
 	<properties>
 		<project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
 	</properties>
+
+	<distributionManagement>
+		<repository>
+			<id>sonatype-nexus-staging</id>
+			<url>https://s01.oss.sonatype.org/content/repositories/releases</url>
+		</repository>
+	</distributionManagement>
+	
 	<build>
 		<plugins>
 			<plugin>
