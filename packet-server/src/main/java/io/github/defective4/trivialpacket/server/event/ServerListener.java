@@ -55,11 +55,12 @@ public interface ServerListener {
 
     /**
      * Called when a custom packet is received
-     *
-     * @param  packet    received packet
+     * 
+     * @param  connection connection
+     * @param  packet     received packet
      * @throws Exception
      */
-    void customPacketReceived(Packet packet) throws Exception;
+    void customPacketReceived(ClientConnection connection, Packet packet) throws Exception;
 
     /**
      * Called when a client responds to server's command

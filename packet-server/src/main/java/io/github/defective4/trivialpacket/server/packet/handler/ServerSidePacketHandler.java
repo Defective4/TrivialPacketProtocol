@@ -58,6 +58,6 @@ public class ServerSidePacketHandler extends PacketHandler {
 
     @Override
     protected void customPacketReceived(Packet packet) throws Exception {
-        for (ServerListener ls : server.getListeners()) ls.customPacketReceived(packet);
+        for (ServerListener ls : server.getListeners()) ls.customPacketReceived(connection, packet);
     }
 }

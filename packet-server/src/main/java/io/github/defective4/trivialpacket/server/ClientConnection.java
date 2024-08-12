@@ -83,6 +83,16 @@ public class ClientConnection implements AutoCloseable {
     }
 
     /**
+     * Disconnect the client
+     * 
+     * @param  reason      disconnect reason
+     * @throws IOException when there was an error sending the packet
+     */
+    public void disconnect(String reason) throws IOException {
+        sendPacket(new DisconnectPacket(reason));
+    }
+
+    /**
      * Send a command request to the client
      *
      * @param  command              command name

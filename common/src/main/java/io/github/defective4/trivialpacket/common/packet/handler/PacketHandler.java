@@ -9,11 +9,12 @@ import io.github.defective4.trivialpacket.common.packet.Packet;
 public abstract class PacketHandler {
 
     public void handle(Packet packet) throws Exception {
-        if (packet.isBuiltIn())
+        if (packet.isBuiltIn()) {
             for (Method m : getClass().getMethods()) if (m.isAnnotationPresent(PacketReceiver.class)) {
                 Parameter[] params = m.getParameters();
                 if (params.length == 1 && params[0].getType() == packet.getClass()) m.invoke(this, packet);
-            } else customPacketReceived(packet);
+            }
+        } else customPacketReceived(packet);
     }
 
     protected abstract void customPacketReceived(Packet packet) throws Exception;

@@ -24,7 +24,7 @@ public abstract class ServerAdapter implements ServerListener {
     public void commandReceived(ClientConnection connection, String command, String[] args) throws Exception {}
 
     @Override
-    public void customPacketReceived(Packet packet) throws Exception {}
+    public void customPacketReceived(ClientConnection connection, Packet packet) throws Exception {}
 
     @Override
     public void responseReceived(ClientConnection connection, byte[] data) throws Exception {}
