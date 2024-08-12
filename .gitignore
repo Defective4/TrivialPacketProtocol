@@ -3,3 +3,4 @@
 .classpath
 target
 Main*.java
+dependency-reduced-pom.xml

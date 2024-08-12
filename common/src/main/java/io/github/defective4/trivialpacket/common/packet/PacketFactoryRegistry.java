@@ -73,7 +73,7 @@ public class PacketFactoryRegistry {
      * @param  id                       packet id. Can't be less than 0
      * @param  factory                  factory to register
      * @throws IllegalStateException    if registering is disabled
-     * @throws IllegalArgumentException if id < 0, id is already used by another
+     * @throws IllegalArgumentException if id is less than 0, id is already used by another
      *                                  packet or if the id belongs to a built-in
      *                                  packet
      */
