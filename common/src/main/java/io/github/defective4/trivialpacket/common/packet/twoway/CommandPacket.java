@@ -1,11 +1,12 @@
 package io.github.defective4.trivialpacket.common.packet.twoway;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.IOException;
 
 import io.github.defective4.trivialpacket.common.packet.Packet;
+import io.github.defective4.trivialpacket.common.packet.PacketFactory;
 
 /**
  * Command packet
@@ -13,16 +14,28 @@ import io.github.defective4.trivialpacket.common.packet.Packet;
 @SuppressWarnings("javadoc")
 public class CommandPacket extends Packet {
 
-    private String[] arguments;
-    private String command;
+    public static final PacketFactory<CommandPacket> FACTORY = new PacketFactory<>(CommandPacket.class) {
 
-    public CommandPacket(byte[] data) {
-        super(data);
-        readBytes(data);
-    }
+        @Override
+        protected CommandPacket createPacket(byte[] data) throws Exception {
+            try (ByteArrayInputStream buffer = new ByteArrayInputStream(data);
+                    DataInputStream wrapper = new DataInputStream(buffer)) {
+                String command = wrapper.readUTF();
+                String[] arguments = new String[wrapper.readInt()];
+                for (int i = 0; i < arguments.length; i++) arguments[i] = wrapper.readUTF();
+                return new CommandPacket(command, arguments);
+            } catch (Exception e) {
+                throw new IllegalStateException(e);
+            }
+        }
+    };
+
+    private final String[] arguments;
+    private final String command;
 
     public CommandPacket(String command, String[] arguments) {
-        super(mkBytes(command, arguments));
+        this.arguments = arguments;
+        this.command = command;
     }
 
     public String[] getArguments() {
@@ -33,29 +46,11 @@ public class CommandPacket extends Packet {
         return command;
     }
 
-    private void readBytes(byte[] data) {
-        try (ByteArrayInputStream buffer = new ByteArrayInputStream(data)) {
-            try (DataInputStream wrapper = new DataInputStream(buffer)) {
-                command = wrapper.readUTF();
-                arguments = new String[wrapper.readInt()];
-                for (int i = 0; i < arguments.length; i++) arguments[i] = wrapper.readUTF();
-            }
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
-    private static byte[] mkBytes(String command, String[] args) {
-        try (ByteArrayOutputStream buffer = new ByteArrayOutputStream()) {
-            try (DataOutputStream wrapper = new DataOutputStream(buffer)) {
-                wrapper.writeUTF(command);
-                wrapper.writeInt(args.length);
-                for (String arg : args) wrapper.writeUTF(arg);
-            }
-            return buffer.toByteArray();
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
-        }
+    @Override
+    protected void writePacket(DataOutputStream str) throws IOException {
+        str.writeUTF(command);
+        str.writeInt(arguments.length);
+        for (String arg : arguments) str.writeUTF(arg);
     }
 
 }

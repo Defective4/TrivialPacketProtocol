@@ -2,7 +2,6 @@ package io.github.defective4.trivialpacket.common.packet;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Objects;
 
 import io.github.defective4.trivialpacket.common.packet.client.AuthPacket;
@@ -12,97 +11,56 @@ import io.github.defective4.trivialpacket.common.packet.twoway.CommandResponsePa
 import io.github.defective4.trivialpacket.common.packet.twoway.DisconnectPacket;
 import io.github.defective4.trivialpacket.common.packet.twoway.PingPacket;
 
-/**
- *
- */
 public class PacketRegistry {
-    private static final Map<Integer, Class<? extends Packet>> FIXED = Map
-            .of(0, DisconnectPacket.class, 1, AuthPacket.class, 2, AuthSuccessPacket.class, 3, PingPacket.class, 4,
-                    CommandPacket.class, 5, CommandResponsePacket.class);
-    private static final Map<Integer, Class<? extends Packet>> PACKET_MAP = new HashMap<>();
-
-    private static boolean unregisteringLocked, registeringLocked;
+    public static boolean registeringDisabled, unregisteringDisabled;
+    private static final Map<Integer, PacketFactory<?>> BUILTIN = Map
+            .of(0, AuthPacket.FACTORY, 1, AuthSuccessPacket.FACTORY, 2, DisconnectPacket.FACTORY, 3, PingPacket.FACTORY,
+                    4, CommandPacket.FACTORY, 5, CommandResponsePacket.FACTORY);
+    private static final Map<Integer, PacketFactory<?>> FACTORIES = new HashMap<>();
 
     static {
-        PACKET_MAP.putAll(FIXED);
+        FACTORIES.putAll(BUILTIN);
     }
 
-    /**
-     * Get packet registered under a specified ID
-     *
-     * @param  id packet's id
-     * @return    registered packet, or <code>null</code> if none
-     */
-    public static Class<? extends Packet> getPacketForID(int id) {
-        return PACKET_MAP.get(id);
+    public static void disableRegistering() {
+        registeringDisabled = true;
     }
 
-    /**
-     * Locks packet registry, meaning no-one will be able to register new
-     * packets.<br>
-     * This method exists for security purposes. <br>
-     * This action can't be reverted.
-     */
-    public static void lockPacketRegistering() {
-        registeringLocked = true;
+    public static void disableUnregistering() {
+        unregisteringDisabled = true;
     }
 
-    /**
-     * Locks packet registry, meaning no-one will be able to unregister existing
-     * packets.<br>
-     * This method exists for security purposes. <br>
-     * This action can't be reverted.
-     */
-    public static void lockPacketUnregistering() {
-        unregisteringLocked = true;
+    public static PacketFactory<?> getFactoryForID(int id) {
+        return FACTORIES.get(id);
     }
 
-    /**
-     * Registers a new packet. <br>
-     * Keep in mind you can't register built-in packets.
-     *
-     * @param  packet                   the packet to register
-     * @throws IllegalStateException    if registering is disabled
-     * @throws IllegalArgumentException if trying to register a built-in packet
-     * @throws NullPointerException     if packet is null
-     */
-    public static void registerNewPacket(Class<? extends Packet> packet) {
-        Objects.requireNonNull(packet);
-        if (registeringLocked) throw new IllegalStateException("Registering new packets is not allowed");
-        if (FIXED.containsValue(packet)) throw new IllegalArgumentException("You can't unregister built-in packets");
-        int freeID = 0;
-        while (PACKET_MAP.containsKey(freeID)) freeID++;
-        PACKET_MAP.put(freeID, packet);
-    }
-
-    /**
-     * Unregisters an existing packet. <br>
-     * Keep in mind you can't unregister built-in packets.
-     *
-     * @param  packet                   the packet you want to unregister
-     * @throws NoSuchElementException   if the packet is not registered
-     * @throws IllegalStateException    if unregistering packets is disabled
-     * @throws IllegalArgumentException if trying to unregister a built-in packet
-     */
-    public static void unregisterPacket(Class<? extends Packet> packet) {
-        Objects.requireNonNull(packet);
-        if (unregisteringLocked) throw new IllegalStateException("Unregistering new packets is not allowed");
-        if (FIXED.containsValue(packet)) throw new IllegalArgumentException("You can't unregister built-in packets");
-        int id = getIDForClass(packet);
-        PACKET_MAP.remove(id);
-    }
-
-    protected static int getIDForClass(Class<? extends Packet> packet) {
-        return PACKET_MAP
+    public static int getIDForPacketClass(Class<? extends Packet> packetClass) {
+        return FACTORIES
                 .entrySet()
                 .stream()
-                .filter(entry -> entry.getValue() == packet)
+                .filter(val -> val.getValue().getPacketClass() == packetClass)
                 .findFirst()
                 .orElseThrow()
                 .getKey();
     }
 
-    protected static boolean isBuiltIn(Class<? extends Packet> packet) {
-        return FIXED.containsValue(packet);
+    public static boolean isBuiltIn(Packet packet) {
+        return BUILTIN.containsKey(packet.getId());
+    }
+
+    public static void registerPacketFactory(int id, PacketFactory<?> factory) {
+        Objects.requireNonNull(factory);
+        if (registeringDisabled) throw new IllegalStateException("Factory registering is disabled");
+        if (id < 0) throw new IllegalArgumentException("id < 0");
+        if (FACTORIES.containsKey(id)) throw new IllegalArgumentException("Packet " + id + " is already registered.");
+        if (BUILTIN.values().stream().anyMatch(f -> f.getPacketClass() == factory.getPacketClass()))
+            throw new IllegalArgumentException("Can't register built-in packets");
+        FACTORIES.put(id, factory);
+    }
+
+    public static boolean unregisterPacketFactory(int id) {
+        if (unregisteringDisabled) throw new IllegalStateException("Factory unregistering is disabled");
+        if (BUILTIN.containsKey(id)) throw new IllegalArgumentException("Can't unregister built-in packets");
+        return FACTORIES.remove(id) != null;
     }
 }

@@ -1,10 +1,9 @@
 package io.github.defective4.trivialpacket.common.packet;
 
+import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Objects;
 
 /**
  * The base packet class. <br>
@@ -18,70 +17,41 @@ import java.util.Objects;
  * - Packet Data - byte array of any length
  * </pre>
  */
-public class Packet {
-    private final byte[] data;
+public abstract class Packet {
+
     private final int id;
 
-    /**
-     * Constructs a new packet.
-     *
-     * @param  data
-     * @throws NullPointerException if data is null
-     * @throws IllegalStateException if packet class is not registered
-     */
-    protected Packet(byte[] data) {
-        Objects.requireNonNull(data);
+    protected Packet() {
         try {
-
-            id = PacketRegistry.getIDForClass(getClass());
+            id = PacketRegistry.getIDForPacketClass(getClass());
         } catch (Exception e) {
-            throw new IllegalStateException("This packet is not registered");
+            throw new IllegalStateException("Packet " + getClass().getName() + " not registered");
         }
-        this.data = data;
     }
 
-    /**
-     * Checks if this packet is built-in
-     *
-     * @return <code>true</code> if built-in
-     */
-    public boolean isBuiltIn() {
-        return PacketRegistry.isBuiltIn(getClass());
+    public int getId() {
+        return id;
     }
 
-    /**
-     * Write the packet to stream
-     *
-     * @param  str                  output stream
-     * @throws IOException          when there was an error writing packet data
-     * @throws NullPointerException if str is null
-     */
     public void writeToStream(DataOutputStream str) throws IOException {
-        Objects.requireNonNull(str);
-        str.writeInt(data.length + 1);
-        str.writeByte(id);
-        str.write(data);
+        try (ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+                DataOutputStream wrapper = new DataOutputStream(buffer)) {
+            writePacket(wrapper);
+            byte[] rawData = buffer.toByteArray();
+            str.writeInt(rawData.length + 1);
+            str.writeByte(id);
+            str.write(rawData);
+        }
     }
 
-    /**
-     * Read packet data from the stream
-     *
-     * @param  isr                  input stream
-     * @return                      read packet
-     * @throws IOException          if there was an error reading the packet
-     * @throws NullPointerException if isr is null
-     */
-    public static Packet readFromStream(DataInputStream isr) throws IOException {
-        Objects.requireNonNull(isr);
-        byte[] data = new byte[isr.readInt()];
+    protected abstract void writePacket(DataOutputStream str) throws IOException;
+
+    public static Packet readFromStream(DataInputStream isr) throws Exception {
+        int length = isr.readInt();
+        byte id = isr.readByte();
+        byte[] data = new byte[length - 1];
         isr.readFully(data);
-        Class<? extends Packet> packetClass = PacketRegistry.getPacketForID(data[0]);
-        if (packetClass == null) throw new IOException("Unknown packet: 0x" + Integer.toHexString(data[0] & 0xFF));
-        try {
-            Object copy = Arrays.copyOfRange(data, 1, data.length);
-            return packetClass.getConstructor(byte[].class).newInstance(copy);
-        } catch (Exception e) {
-            throw new IOException(e);
-        }
+        PacketFactory<?> factory = PacketRegistry.getFactoryForID(id);
+        return factory == null ? null : factory.createPacket(data);
     }
 }

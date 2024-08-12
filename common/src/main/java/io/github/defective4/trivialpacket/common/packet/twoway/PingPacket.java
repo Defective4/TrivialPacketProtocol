@@ -1,31 +1,32 @@
 package io.github.defective4.trivialpacket.common.packet.twoway;
 
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 
 import io.github.defective4.trivialpacket.common.packet.Packet;
+import io.github.defective4.trivialpacket.common.packet.PacketFactory;
 
 @SuppressWarnings("javadoc")
 public class PingPacket extends Packet {
 
+    public static final PacketFactory<PingPacket> FACTORY = new PacketFactory<>(PingPacket.class) {
+
+        @Override
+        protected PingPacket createPacket(byte[] data) throws Exception {
+            return new PingPacket(ByteBuffer.wrap(data).getLong());
+        }
+    };
+
     private final long id;
 
-    public PingPacket(byte[] data) {
-        super(data);
-        id = ByteBuffer.wrap(data).getLong();
-    }
-
     public PingPacket(long id) {
-        this(mkBytes(id));
+        this.id = id;
     }
 
-    public long getId() {
-        return id;
-    }
-
-    private static byte[] mkBytes(long id) {
-        ByteBuffer buffer = ByteBuffer.allocate(8);
-        buffer.putLong(id);
-        return buffer.array();
+    @Override
+    protected void writePacket(DataOutputStream str) throws IOException {
+        str.writeLong(id);
     }
 
 }

@@ -1,10 +1,12 @@
 package io.github.defective4.trivialpacket.examples;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
 
 import io.github.defective4.trivialpacket.client.CmdClient;
 import io.github.defective4.trivialpacket.client.event.ClientAdapter;
 import io.github.defective4.trivialpacket.common.packet.Packet;
+import io.github.defective4.trivialpacket.common.packet.PacketFactory;
 import io.github.defective4.trivialpacket.common.packet.PacketRegistry;
 import io.github.defective4.trivialpacket.server.ClientConnection;
 import io.github.defective4.trivialpacket.server.CmdServer;
@@ -14,26 +16,34 @@ public class CustomPacketExample {
 
     public static class ExamplePacket extends Packet {
 
+        public static final PacketFactory<ExamplePacket> FACTORY = new PacketFactory<>(ExamplePacket.class) {
+
+            @Override
+            protected ExamplePacket createPacket(byte[] data) throws Exception {
+                return new ExamplePacket(new String(data));
+            }
+        };
+
         private final String string;
 
-        public ExamplePacket(byte[] data) {
-            super(data);
-            this.string = new String(data);
-        }
-
         public ExamplePacket(String string) {
-            this(string.getBytes());
+            this.string = string;
         }
 
         public String getString() {
             return string;
         }
 
+        @Override
+        protected void writePacket(DataOutputStream str) throws IOException {
+            str.write(string.getBytes());
+        }
+
     }
 
     public static void main(String[] args) {
         try {
-            PacketRegistry.registerNewPacket(ExamplePacket.class);
+            PacketRegistry.registerPacketFactory(6, ExamplePacket.FACTORY);
 
             CmdServer server = new CmdServer("localhost", 8083, null);
             server.addListener(new ServerAdapter() {

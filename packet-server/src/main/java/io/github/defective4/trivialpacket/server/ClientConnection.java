@@ -52,6 +52,16 @@ public class ClientConnection implements AutoCloseable {
     }
 
     /**
+     * Disconnect the client
+     *
+     * @param  reason      disconnect reason
+     * @throws IOException when there was an error sending the packet
+     */
+    public void disconnect(String reason) throws IOException {
+        sendPacket(new DisconnectPacket(reason));
+    }
+
+    /**
      * See {@link Socket#getInetAddress()}
      *
      * @return underlying socket's inet address
@@ -80,16 +90,6 @@ public class ClientConnection implements AutoCloseable {
      */
     public void respond(byte[] data) throws IOException {
         sendPacket(new CommandResponsePacket(data));
-    }
-
-    /**
-     * Disconnect the client
-     * 
-     * @param  reason      disconnect reason
-     * @throws IOException when there was an error sending the packet
-     */
-    public void disconnect(String reason) throws IOException {
-        sendPacket(new DisconnectPacket(reason));
     }
 
     /**

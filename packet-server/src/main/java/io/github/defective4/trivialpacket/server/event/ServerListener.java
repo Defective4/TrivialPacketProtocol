@@ -55,7 +55,7 @@ public interface ServerListener {
 
     /**
      * Called when a custom packet is received
-     * 
+     *
      * @param  connection connection
      * @param  packet     received packet
      * @throws Exception

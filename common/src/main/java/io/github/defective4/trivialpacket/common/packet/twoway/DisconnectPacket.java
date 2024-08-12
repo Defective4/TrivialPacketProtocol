@@ -1,8 +1,11 @@
 package io.github.defective4.trivialpacket.common.packet.twoway;
 
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 import io.github.defective4.trivialpacket.common.packet.Packet;
+import io.github.defective4.trivialpacket.common.packet.PacketFactory;
 
 /**
  * A disconnect packet. <br>
@@ -11,17 +14,20 @@ import io.github.defective4.trivialpacket.common.packet.Packet;
  */
 public class DisconnectPacket extends Packet {
 
+    public static final PacketFactory<DisconnectPacket> FACTORY = new PacketFactory<>(
+            DisconnectPacket.class) {
+
+        @Override
+        protected DisconnectPacket createPacket(byte[] data) throws Exception {
+            return new DisconnectPacket(new String(data, StandardCharsets.UTF_8));
+        }
+    };
+
     private final String reason;
 
     @SuppressWarnings("javadoc")
-    public DisconnectPacket(byte[] data) {
-        super(data);
-        reason = new String(data, StandardCharsets.UTF_8);
-    }
-
-    @SuppressWarnings("javadoc")
     public DisconnectPacket(String reason) {
-        this(reason.getBytes(StandardCharsets.UTF_8));
+        this.reason = reason;
     }
 
     /**
@@ -29,6 +35,11 @@ public class DisconnectPacket extends Packet {
      */
     public String getReason() {
         return reason;
+    }
+
+    @Override
+    protected void writePacket(DataOutputStream str) throws IOException {
+        str.write(reason.getBytes(StandardCharsets.UTF_8));
     }
 
 }
