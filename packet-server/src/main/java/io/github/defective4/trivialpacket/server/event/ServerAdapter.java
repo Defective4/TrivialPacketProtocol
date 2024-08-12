@@ -14,6 +14,9 @@ public abstract class ServerAdapter implements ServerListener {
     public void clientConnected(ClientConnection connection) throws Exception {}
 
     @Override
+    public void clientDisconnected(ClientConnection connection) throws Exception {}
+
+    @Override
     public void clientPinged(long id) throws Exception {}
 
     @Override

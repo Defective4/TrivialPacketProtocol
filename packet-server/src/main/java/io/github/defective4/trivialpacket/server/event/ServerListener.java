@@ -27,6 +27,14 @@ public interface ServerListener {
     void clientConnected(ClientConnection connection) throws Exception;
 
     /**
+     * Called when a client disconnects. <br>
+     * 
+     * @param  connection client connection. Can be <code>null</code>
+     * @throws Exception
+     */
+    void clientDisconnected(ClientConnection connection) throws Exception;
+
+    /**
      * Called when a client sends a ping packet to the server
      *
      * @param  id
