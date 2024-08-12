@@ -4,6 +4,10 @@ import java.nio.charset.StandardCharsets;
 
 import io.github.defective4.cmdserver.common.packet.Packet;
 
+/**
+ * Authentication packet.
+ */
+@SuppressWarnings("javadoc")
 public class AuthPacket extends Packet {
     private final char[] token;
 

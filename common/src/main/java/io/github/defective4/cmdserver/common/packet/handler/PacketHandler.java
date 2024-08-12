@@ -5,6 +5,7 @@ import java.lang.reflect.Parameter;
 
 import io.github.defective4.cmdserver.common.packet.Packet;
 
+@SuppressWarnings("javadoc")
 public abstract class PacketHandler {
 
     public void handle(Packet packet) throws Exception {

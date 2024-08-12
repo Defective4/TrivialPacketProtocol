@@ -7,6 +7,10 @@ import java.io.DataOutputStream;
 
 import io.github.defective4.cmdserver.common.packet.Packet;
 
+/**
+ * Command packet
+ */
+@SuppressWarnings("javadoc")
 public class CommandPacket extends Packet {
 
     private String[] arguments;

@@ -9,9 +9,19 @@ import io.github.defective4.cmdserver.common.packet.twoway.CommandResponsePacket
 import io.github.defective4.cmdserver.common.packet.twoway.DisconnectPacket;
 import io.github.defective4.cmdserver.common.packet.twoway.PingPacket;
 
+/**
+ * This is the main packet handler added by default to new clients. <br>
+ * Methods here should never be called manually.
+ */
+@SuppressWarnings("javadoc")
 public class ClientSidePacketHandler extends PacketHandler {
     private final CmdClient client;
 
+    /**
+     * Constructs a new packet handler
+     *
+     * @param client
+     */
     public ClientSidePacketHandler(CmdClient client) {
         this.client = client;
     }

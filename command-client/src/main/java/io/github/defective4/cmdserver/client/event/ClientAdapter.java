@@ -2,6 +2,9 @@ package io.github.defective4.cmdserver.client.event;
 
 import io.github.defective4.cmdserver.common.packet.twoway.DisconnectPacket;
 
+/**
+ * This is an adapter class for {@link ClientListener}
+ */
 public abstract class ClientAdapter implements ClientListener {
 
     @Override

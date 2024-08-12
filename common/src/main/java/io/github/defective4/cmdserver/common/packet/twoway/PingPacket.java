@@ -4,6 +4,7 @@ import java.nio.ByteBuffer;
 
 import io.github.defective4.cmdserver.common.packet.Packet;
 
+@SuppressWarnings("javadoc")
 public class PingPacket extends Packet {
 
     private final long id;

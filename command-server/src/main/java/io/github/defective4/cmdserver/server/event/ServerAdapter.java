@@ -2,6 +2,9 @@ package io.github.defective4.cmdserver.server.event;
 
 import io.github.defective4.cmdserver.server.ClientConnection;
 
+/**
+ * Adapter class for {@link ServerListener}
+ */
 public abstract class ServerAdapter implements ServerListener {
 
     @Override

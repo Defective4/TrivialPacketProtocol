@@ -15,6 +15,7 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 
+@SuppressWarnings("javadoc")
 public class SSLManager {
 
     public static SSLContext mkSSLContext(Certificate cert, PrivateKey key) throws KeyStoreException, IOException,

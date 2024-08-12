@@ -12,6 +12,10 @@ import io.github.defective4.cmdserver.server.ClientConnection;
 import io.github.defective4.cmdserver.server.CmdServer;
 import io.github.defective4.cmdserver.server.event.ServerListener;
 
+/**
+ * A default packet handler added to new {@link CmdServer}s
+ */
+@SuppressWarnings("javadoc")
 public class ServerSidePacketHandler extends PacketHandler {
     private final ClientConnection connection;
     private final CmdServer server;

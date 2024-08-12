@@ -16,6 +16,10 @@ import io.github.defective4.cmdserver.common.packet.twoway.DisconnectPacket;
 import io.github.defective4.cmdserver.server.event.ServerListener;
 import io.github.defective4.cmdserver.server.packet.handler.ServerSidePacketHandler;
 
+/**
+ * Class representing a single client connection. <br>
+ * You can interact with the connected client through this class's methods
+ */
 public class ClientConnection implements AutoCloseable {
     private final ServerSidePacketHandler handler;
     private final DataInputStream is;
@@ -23,7 +27,14 @@ public class ClientConnection implements AutoCloseable {
     private final CmdServer server;
     private final Socket socket;
 
-    public ClientConnection(Socket socket, CmdServer server) throws IOException {
+    /**
+     * Default constructor
+     *
+     * @param  socket
+     * @param  server
+     * @throws IOException
+     */
+    protected ClientConnection(Socket socket, CmdServer server) throws IOException {
         this.socket = socket;
         os = new DataOutputStream(socket.getOutputStream());
         is = new DataInputStream(socket.getInputStream());
@@ -36,15 +47,66 @@ public class ClientConnection implements AutoCloseable {
         socket.close();
     }
 
+    /**
+     * See {@link Socket#getInetAddress()}
+     *
+     * @return underlying socket's inet address
+     */
     public InetAddress getInetAddress() {
         return socket.getInetAddress();
     }
 
+    /**
+     * See {@link Socket#getPort()}
+     *
+     * @return underlying socket's port
+     */
     public int getPort() {
         return socket.getPort();
     }
 
-    public void handle() throws Exception {
+    /**
+     * Respond to a command send by the client. <br>
+     * By definition you should only use this to respond to the client's command,
+     * but in reality you can send this data at any point during connection and the
+     * default CmdClient implementation will handle it just fine.
+     *
+     * @param  data        data to send
+     * @throws IOException when there was an error sending the packet
+     */
+    public void respond(byte[] data) throws IOException {
+        sendPacket(new CommandResponsePacket(data));
+    }
+
+    /**
+     * Send a command request to the client
+     *
+     * @param  command     command name
+     * @param  args        command arguments
+     * @throws IOException when there was an error sending the packet
+     */
+    public void sendCommand(String command, String... args) throws IOException {
+        sendPacket(new CommandPacket(command, args));
+    }
+
+    /**
+     * Send a raw packet to the client. For internal use.
+     *
+     * @param  packet      packet to send
+     * @throws IOException when there was an error sending the packet
+     */
+    public void sendPacket(Packet packet) throws IOException {
+        packet.writeToStream(os);
+    }
+
+    /**
+     * Starts the command loop.<br>
+     * You shouldn't send any data before
+     * {@link ServerListener#clientAuthorized(ClientConnection)} is called
+     *
+     * @throws Exception
+     */
+    protected void handle() throws Exception {
         if (!(Packet.readFromStream(is) instanceof AuthPacket authPacket))
             throw new IOException("Invalid auth packet received");
         if (!new String(server.getToken()).equals(new String(authPacket.getToken()))) {
@@ -60,18 +122,6 @@ public class ClientConnection implements AutoCloseable {
                 throw e.getCause() == null ? e : new Exception(e.getCause());
             }
         }
-    }
-
-    public void respond(byte[] data) throws IOException {
-        sendPacket(new CommandResponsePacket(data));
-    }
-
-    public void sendCommand(String command, String... args) throws IOException {
-        sendPacket(new CommandPacket(command, args));
-    }
-
-    public void sendPacket(Packet packet) throws IOException {
-        packet.writeToStream(os);
     }
 
 }
