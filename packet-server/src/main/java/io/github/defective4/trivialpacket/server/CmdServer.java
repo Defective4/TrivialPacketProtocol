@@ -196,7 +196,6 @@ public class CmdServer implements AutoCloseable {
         while (!isClosed()) {
             Socket socket = server.accept();
             pool.submit(() -> {
-                System.out.println("Accepted");
                 try (ClientConnection client = new ClientConnection(server.accept(), this)) {
                     for (ServerListener ls : listeners) ls.clientConnected(client);
                     client.handle();
