@@ -40,8 +40,8 @@ Currently the only requirement to use the library is Java 17
 ## Installation
 ### From source
 0. Make sure you have `git` and `maven` installed
-1. `git clone https://github.com/Defective4/TrivialPacketFormat.git`
-2. `cd TrivialPacketFormat`
+1. `git clone https://github.com/Defective4/TrivialPacketProtocol.git`
+2. `cd TrivialPacketProtocol`
 3. `mvn clean package`
 
 The compiled binaries will now be available in:
