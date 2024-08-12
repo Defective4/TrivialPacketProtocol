@@ -13,7 +13,7 @@ public class FixedTokenProvider implements TokenProvider {
 
     /**
      * Default constructor
-     * 
+     *
      * @param  token
      * @throws NullPointerException if token is null
      */

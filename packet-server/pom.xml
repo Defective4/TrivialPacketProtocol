@@ -3,16 +3,16 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>io.github.defective4</groupId>
-		<artifactId>command-protocol</artifactId>
+		<groupId>io.github.defective4.trivialpacket</groupId>
+		<artifactId>trivial-packet-protocol</artifactId>
 		<version>1.0</version>
 	</parent>
-	<artifactId>command-server</artifactId>
-	<name>Command Server</name>
+	<artifactId>packet-server</artifactId>
+	<name>Trivial Packet Server</name>
 	<description>A server accepting string commands in exchange for raw data</description>
 	<dependencies>
 		<dependency>
-			<groupId>io.github.defective4</groupId>
+			<groupId>io.github.defective4.trivialpacket</groupId>
 			<artifactId>common</artifactId>
 			<version>1.0</version>
 		</dependency>

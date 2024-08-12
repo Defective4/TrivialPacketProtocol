@@ -11,7 +11,7 @@ package io.github.defective4.cmdserver.common.token;
 public interface TokenProvider {
     /**
      * Retrieve the token
-     * 
+     *
      * @return token
      */
     char[] provide();
