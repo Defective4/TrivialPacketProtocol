@@ -3,6 +3,7 @@ package io.github.defective4.trivialpacket.server;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
+import java.net.Socket;
 import java.net.SocketException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
@@ -15,6 +16,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.net.ssl.SSLContext;
 
@@ -51,6 +54,8 @@ public class CmdServer implements AutoCloseable {
 
     private final String host;
     private final List<ServerListener> listeners = new CopyOnWriteArrayList<>();
+    private ExecutorService pool;
+    private int poolSize = 1;
     private final int port;
     private final ServerSocket server;
     private TokenProvider tokenProvider;
@@ -129,6 +134,15 @@ public class CmdServer implements AutoCloseable {
     }
 
     /**
+     * Get current thread pool size
+     *
+     * @return current thread pool size
+     */
+    public int getPoolSize() {
+        return poolSize;
+    }
+
+    /**
      * Get current token provider's class. <br>
      * For security reasons it's not supported to retrieve current token provider.
      * <br>
@@ -136,8 +150,25 @@ public class CmdServer implements AutoCloseable {
      *
      * @return current token provider implementation
      */
-    public Class<? extends TokenProvider> getTokenProvider() {
+    public Class<? extends TokenProvider> getTokenProviderClass() {
         return tokenProvider.getClass();
+    }
+
+    /**
+     * Set thread pool size. <br>
+     * If there is no space for new threads in the current thread pool, no new
+     * client will be able to connect. <br>
+     * Default pool size for new server instances is <code>1</code><br>
+     * You can only set thread pool size on unbound servers.
+     *
+     * @param  poolSize
+     * @throws IllegalStateException    if the server is already bound
+     * @throws IllegalArgumentException if poolSize is less than 1
+     */
+    public void setPoolSize(int poolSize) {
+        if (server.isBound()) throw new IllegalStateException("Already bound");
+        if (poolSize < 1) throw new IllegalArgumentException("poolSize can't be less than 1");
+        this.poolSize = poolSize;
     }
 
     /**
@@ -155,17 +186,24 @@ public class CmdServer implements AutoCloseable {
      * Bind this server and start listening for connections. <br>
      * To interact with connected clients use {@link ServerListener}
      *
-     * @throws IOException if there was an error starting the server
+     * @throws IOException           if there was an error starting the server
+     * @throws IllegalStateException if the server is already bound
      */
     public void start() throws IOException {
+        pool = poolSize == 1 ? Executors.newSingleThreadExecutor() : Executors.newFixedThreadPool(poolSize);
+        if (server.isBound()) throw new IllegalStateException("Already bound");
         server.bind(new InetSocketAddress(port));
         while (!isClosed()) {
-            try (ClientConnection client = new ClientConnection(server.accept(), this)) {
-                for (ServerListener ls : listeners) ls.clientConnected(client);
-                client.handle();
-            } catch (SocketException e) {} catch (Exception e) {
-                e.printStackTrace();
-            }
+            Socket socket = server.accept();
+            pool.submit(() -> {
+                System.out.println("Accepted");
+                try (ClientConnection client = new ClientConnection(server.accept(), this)) {
+                    for (ServerListener ls : listeners) ls.clientConnected(client);
+                    client.handle();
+                } catch (SocketException e) {} catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
         }
     }
 
