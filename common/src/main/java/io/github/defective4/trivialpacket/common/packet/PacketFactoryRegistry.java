@@ -55,6 +55,17 @@ public class PacketFactoryRegistry {
     }
 
     /**
+     * Checks for a first free packet ID in the registry
+     * 
+     * @return first free ID
+     */
+    public static int getFirstFreeID() {
+        int freeID = 0;
+        while (FACTORIES.containsKey(freeID)) freeID++;
+        return freeID;
+    }
+
+    /**
      * Registers a new factory. <br>
      * IDs 0-5 are currently reserved for built-in packets and therefore cannot be
      * overridden.
