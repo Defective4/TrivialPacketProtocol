@@ -27,10 +27,16 @@ public class Packet {
      *
      * @param  data
      * @throws NullPointerException if data is null
+     * @throws IllegalStateException if packet class is not registered
      */
     protected Packet(byte[] data) {
         Objects.requireNonNull(data);
-        id = PacketRegistry.getIDForClass(getClass());
+        try {
+
+            id = PacketRegistry.getIDForClass(getClass());
+        } catch (Exception e) {
+            throw new IllegalStateException("This packet is not registered");
+        }
         this.data = data;
     }
 

@@ -112,6 +112,7 @@ public static void main(String[] args) {
 ```
 
 ## Defining custom packets
+See [CustomPacketExample.java](examples/src/main/java/io/github/defective4/trivialpacket/examples/CustomPacketExample.java) for a practical example. 
 
 ### Step 0 - Setting up client and server projects
 Create two separate projects, one with `packet-client` dependency, and one with `packet-server`.
@@ -153,3 +154,41 @@ Here's an example code:
 PacketRegistry.registerNewPacket(ExamplePacket.class);
 ```
 do it in both of your projects.  
+
+### Step 3 - Use the packet
+
+Code for the server:
+```java
+try(CmdServer server = new CmdServer("localhost", 8083, null)) {
+    server.addListener(new ServerAdapter() {
+
+        @Override
+        public void customPacketReceived(ClientConnection connection, Packet packet) throws Exception {
+            System.out.println("Received custom packet: " + packet.getClass());
+            if (packet instanceof ExamplePacket example) {
+                System.out.println(example.getString());
+                connection.disconnect("Closed");
+                server.close();
+            }
+        }
+
+    });
+
+    server.start();
+}
+```
+
+Code for the client:
+```java
+try (CmdClient client = new CmdClient("localhost", 8083, null)) {
+    client.addListener(new ClientAdapter() {
+
+        @Override
+        public void authorized() throws Exception {
+            client.sendPacket(new ExamplePacket("Test String"));
+        }
+
+    });
+    client.connect();
+}
+```
