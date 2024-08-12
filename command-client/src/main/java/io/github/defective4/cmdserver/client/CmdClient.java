@@ -29,6 +29,8 @@ import io.github.defective4.cmdserver.common.packet.twoway.CommandResponsePacket
 import io.github.defective4.cmdserver.common.packet.twoway.DisconnectPacket;
 import io.github.defective4.cmdserver.common.packet.twoway.PingPacket;
 import io.github.defective4.cmdserver.common.ssl.SSLManager;
+import io.github.defective4.cmdserver.common.token.FixedTokenProvider;
+import io.github.defective4.cmdserver.common.token.TokenProvider;
 
 /**
  * The main client class.<br>
@@ -69,7 +71,7 @@ public class CmdClient implements AutoCloseable {
     private final int port;
 
     private final Socket socket;
-    private final char[] token;
+    private TokenProvider tokenProvider;
 
     /**
      * Constructs a client with SSL disabled.<br>
@@ -87,7 +89,7 @@ public class CmdClient implements AutoCloseable {
         cert = null;
         this.host = host;
         this.port = port;
-        this.token = token == null ? new char[0] : token;
+        tokenProvider = new FixedTokenProvider(token == null ? new char[0] : token);
         socket = new Socket();
     }
 
@@ -110,7 +112,7 @@ public class CmdClient implements AutoCloseable {
     public CmdClient(String host, int port, char[] token, Certificate cert) throws IOException {
         Objects.requireNonNull(host);
         Objects.requireNonNull(cert);
-        this.token = token == null ? new char[0] : token;
+        tokenProvider = new FixedTokenProvider(token == null ? new char[0] : token);
         this.cert = cert;
         this.host = host;
         this.port = port;
@@ -164,7 +166,7 @@ public class CmdClient implements AutoCloseable {
         is = new DataInputStream(socket.getInputStream());
         os = new DataOutputStream(socket.getOutputStream());
         connected = true;
-        sendPacket(new AuthPacket(token));
+        sendPacket(new AuthPacket(tokenProvider.provide()));
         Packet authResponse = Packet.readFromStream(is);
         if (authResponse instanceof DisconnectPacket disconnectPacket) {
             throw new IOException("Server rejected the connection: " + disconnectPacket.getReason());
@@ -241,6 +243,18 @@ public class CmdClient implements AutoCloseable {
     }
 
     /**
+     * Get current token provider's class. <br>
+     * For security reasons it's not supported to retrieve current token provider.
+     * <br>
+     * It still might be possible to do using reflection.
+     *
+     * @return current token provider implementation
+     */
+    public Class<? extends TokenProvider> getTokenProvider() {
+        return tokenProvider.getClass();
+    }
+
+    /**
      * Check if the underlying socket is closed.<br>
      * This delegates to {@link Socket#isClosed()}
      *
@@ -311,6 +325,19 @@ public class CmdClient implements AutoCloseable {
      */
     public void setLastPingID(long lastPingID) {
         this.lastPingID = lastPingID;
+    }
+
+    /**
+     * Sets a new token provider. <br>
+     * This can only be used before calling {@link #connect()}
+     *
+     * @param  provider             a new token provider
+     * @throws NullPointerException if provider is null
+     */
+    public void setTokenProvider(TokenProvider provider) {
+        Objects.requireNonNull(provider);
+        if (connected) throw new IllegalStateException("Already connected");
+        tokenProvider = provider;
     }
 
 }

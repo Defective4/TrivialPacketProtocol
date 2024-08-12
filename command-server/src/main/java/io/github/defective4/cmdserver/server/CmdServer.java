@@ -19,6 +19,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import javax.net.ssl.SSLContext;
 
 import io.github.defective4.cmdserver.common.ssl.SSLManager;
+import io.github.defective4.cmdserver.common.token.FixedTokenProvider;
+import io.github.defective4.cmdserver.common.token.TokenProvider;
 import io.github.defective4.cmdserver.server.event.ServerListener;
 
 /**
@@ -51,7 +53,7 @@ public class CmdServer implements AutoCloseable {
     private final List<ServerListener> listeners = new CopyOnWriteArrayList<>();
     private final int port;
     private final ServerSocket server;
-    private final char[] token;
+    private TokenProvider tokenProvider;
 
     /**
      * Creates a new command server with no SSL. <br>
@@ -65,7 +67,7 @@ public class CmdServer implements AutoCloseable {
     public CmdServer(String host, int port, char[] token) throws IOException {
         server = new ServerSocket();
         this.port = port;
-        this.token = token == null ? new char[0] : token;
+        tokenProvider = new FixedTokenProvider(token == null ? new char[0] : token);
         this.host = host;
     }
 
@@ -96,7 +98,7 @@ public class CmdServer implements AutoCloseable {
         SSLContext context = SSLManager.mkSSLContext(cert, key);
         server = context.getServerSocketFactory().createServerSocket();
         this.port = port;
-        this.token = token == null ? new char[0] : token;
+        tokenProvider = new FixedTokenProvider(token == null ? new char[0] : token);
         this.host = host;
     }
 
@@ -127,6 +129,29 @@ public class CmdServer implements AutoCloseable {
     }
 
     /**
+     * Get current token provider's class. <br>
+     * For security reasons it's not supported to retrieve current token provider.
+     * <br>
+     * It still might be possible to do using reflection.
+     *
+     * @return current token provider implementation
+     */
+    public Class<? extends TokenProvider> getTokenProvider() {
+        return tokenProvider.getClass();
+    }
+
+    /**
+     * Sets a new token provider. <br>
+     *
+     * @param  provider             a new token provider
+     * @throws NullPointerException if provider is null
+     */
+    public void setTokenProvider(TokenProvider provider) {
+        Objects.requireNonNull(provider);
+        tokenProvider = provider;
+    }
+
+    /**
      * Bind this server and start listening for connections. <br>
      * To interact with connected clients use {@link ServerListener}
      *
@@ -150,7 +175,7 @@ public class CmdServer implements AutoCloseable {
      * @return server token
      */
     protected char[] getToken() {
-        return token;
+        return tokenProvider.provide();
     }
 
     private boolean isClosed() {
