@@ -208,9 +208,10 @@ public class CmdClient implements AutoCloseable {
      * Sends a {@link DisconnectPacket} to the server and closes the underlying
      * connection.
      *
-     * @param  reason               plain text reason
-     * @throws IOException          if there was an error closing the client.
-     * @throws NullPointerException if reason is null
+     * @param  reason                plain text reason
+     * @throws IOException           if there was an error closing the client.
+     * @throws NullPointerException  if reason is null
+     * @throws IllegalStateException if the client is not connected
      */
     public void disconnect(String reason) throws IOException {
         Objects.requireNonNull(reason);
@@ -281,8 +282,10 @@ public class CmdClient implements AutoCloseable {
      * but in reality you can send this data at any point during connection and the
      * default CmdServer implementation will handle it just fine.
      *
-     * @param  data        data to send to the server
-     * @throws IOException if there was an error sending data packet to the server
+     * @param  data                  data to send to the server
+     * @throws IOException           if there was an error sending data packet to
+     *                               the server
+     * @throws IllegalStateException if the client is not connected
      */
     public void respond(byte[] data) throws IOException {
         sendPacket(new CommandResponsePacket(data));
@@ -291,11 +294,12 @@ public class CmdClient implements AutoCloseable {
     /**
      * Send a command request to the server.
      *
-     * @param  command              command name
-     * @param  arguments            command arguments
-     * @throws IOException          if there was an error sending data packet to the
-     *                              server
-     * @throws NullPointerException if command or any of the arguments is null
+     * @param  command               command name
+     * @param  arguments             command arguments
+     * @throws IOException           if there was an error sending data packet to
+     *                               the server
+     * @throws NullPointerException  if command or any of the arguments is null
+     * @throws IllegalStateException if the client is not connected
      */
     public void sendCommand(String command, String... arguments) throws IOException {
         Objects.requireNonNull(command);
@@ -307,10 +311,11 @@ public class CmdClient implements AutoCloseable {
     /**
      * Send a raw packet to the server.
      *
-     * @param  packet               packet to send
-     * @throws IOException          if there was an error sending data packet to the
-     *                              server
-     * @throws NullPointerException if packet is null
+     * @param  packet                packet to send
+     * @throws IOException           if there was an error sending data packet to
+     *                               the server
+     * @throws NullPointerException  if packet is null
+     * @throws IllegalStateException if the client is not connected
      */
     public void sendPacket(Packet packet) throws IOException {
         Objects.requireNonNull(packet);
@@ -331,8 +336,9 @@ public class CmdClient implements AutoCloseable {
      * Sets a new token provider. <br>
      * This can only be used before calling {@link #connect()}
      *
-     * @param  provider             a new token provider
-     * @throws NullPointerException if provider is null
+     * @param  provider              a new token provider
+     * @throws NullPointerException  if provider is null
+     * @throws IllegalStateException if the client is already connected
      */
     public void setTokenProvider(TokenProvider provider) {
         Objects.requireNonNull(provider);
