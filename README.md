@@ -4,7 +4,7 @@
 ## About
 Trivial Packet Protocol is a client and server library, allowing you to send binary data in the form of packets over network.  
 It makes it easier to maintain a continuous stream between two or more pieces of software running on different machines.  
-The library is designed to allow you to design a network flow, where you use string commands to occassionally request data from the server and listen for a binary response.
+The library is designed to allow you to design a network flow, where you use string commands to occasionally request data from the server and listen for a binary response.
 
 ## Library features
 - [x] 🪶 Simple, lightweight client - server structure
@@ -14,7 +14,7 @@ The library is designed to allow you to design a network flow, where you use str
 - [x] 📎 Secure - Requires a token on both ends before accepting any packets
 
 ## Use cases
-This library is perfect for situations, where you need to occassionally request data from a server without opening a new connection every single time.  
+This library is perfect for situations, where you need to occasionally request data from a server without opening a new connection every single time.  
 Trivial Packet Protocol allows you to open and maintain a constant, protected, and encrypted connection between client(s) and a server.
 
 ## How does it work?
