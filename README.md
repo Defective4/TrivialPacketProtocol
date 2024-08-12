@@ -1,9 +1,17 @@
 # Trivial Packet Protocol
+[About](#About) | [Installation](#Installation) | [Usage](#Usage)
 
 ## About
 Trivial Packet Protocol is a client and server library, allowing you to send binary data in the form of packets over network.  
 It makes it easier to maintain a continuous stream between two or more pieces of software running on different machines.  
 The library is designed to allow you to design a network flow, where you use string commands to occassionally request data from the server and listen for a binary response.
+
+## Library features
+- [x] 🪶 Simple, lightweight client - server structure
+- [x] 📦 Zero required dependencies
+- [x] 🔑 SSL support, using a Certificate and a Private Key
+- [x] 🧩 Expandable - You can register and use your own packets
+- [x] 📎 Secure - Requires a token on both ends before accepting any packets
 
 ## Use cases
 This library is perfect for situations, where you need to occassionally request data from a server without opening a new connection every single time.  
@@ -25,13 +33,6 @@ In default library implementation the client sends a `Ping` packet every 15 seco
 If the client does not receive a `Ping` response before sending the next `Ping` packet, it disconnects with a "Timed Out" message.
 
 ![drawing1](img/drawing1.png)
-
-## Library features
-- [x] 🪶 Simple, lightweight client - server structure
-- [x] 📦 Zero required dependencies
-- [x] 🔑 SSL support, using a Certificate and a Private Key
-- [x] 🧩 Expandable - You can register and use your own packets
-- [x] 📎 Secure - Requires a token on both ends before accepting any packets
 
 ## Requirements
 Currently the only requirement to use the library is Java 17
