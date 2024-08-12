@@ -10,6 +10,7 @@ import java.security.SecureRandom;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import java.util.Objects;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
@@ -20,6 +21,7 @@ public class SSLManager {
 
     public static SSLContext mkSSLContext(Certificate cert, PrivateKey key) throws KeyStoreException, IOException,
             NoSuchAlgorithmException, CertificateException, UnrecoverableKeyException, KeyManagementException {
+        Objects.requireNonNull(cert);
         KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
         keyStore.load(null, null);
         keyStore.setCertificateEntry("cert", cert);

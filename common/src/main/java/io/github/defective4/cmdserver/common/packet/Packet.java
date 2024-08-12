@@ -4,6 +4,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * The base packet class. <br>
@@ -24,9 +25,11 @@ public class Packet {
     /**
      * Constructs a new packet.
      *
-     * @param data
+     * @param  data
+     * @throws NullPointerException if data is null
      */
     protected Packet(byte[] data) {
+        Objects.requireNonNull(data);
         id = PacketRegistry.getIDForClass(getClass());
         this.data = data;
     }
@@ -34,10 +37,12 @@ public class Packet {
     /**
      * Write the packet to stream
      *
-     * @param  str         output stream
-     * @throws IOException when there was an error writing packet data
+     * @param  str                  output stream
+     * @throws IOException          when there was an error writing packet data
+     * @throws NullPointerException if str is null
      */
     public void writeToStream(DataOutputStream str) throws IOException {
+        Objects.requireNonNull(str);
         str.writeInt(data.length + 1);
         str.writeByte(id);
         str.write(data);
@@ -46,11 +51,13 @@ public class Packet {
     /**
      * Read packet data from the stream
      *
-     * @param  isr         input stream
-     * @return             read packet
-     * @throws IOException if there was an error reading the packet
+     * @param  isr                  input stream
+     * @return                      read packet
+     * @throws IOException          if there was an error reading the packet
+     * @throws NullPointerException if isr is null
      */
     public static Packet readFromStream(DataInputStream isr) throws IOException {
+        Objects.requireNonNull(isr);
         byte[] data = new byte[isr.readInt()];
         isr.readFully(data);
         Class<? extends Packet> packetClass = PacketRegistry.getPacketForID(data[0]);

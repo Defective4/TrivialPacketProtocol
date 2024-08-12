@@ -75,10 +75,12 @@ public class CmdClient implements AutoCloseable {
      * Constructs a client with SSL disabled.<br>
      * The target server has to have SSL disabled too.
      *
-     * @param host  host to connect to
-     * @param port  target port
-     * @param token Authorization token. It has to be the same token as used on the
-     *              target server. Can be <code>null</code>
+     * @param  host                 host to connect to
+     * @param  port                 target port
+     * @param  token                Authorization token. It has to be the same token
+     *                              as used on the target server. Can be
+     *                              <code>null</code>
+     * @throws NullPointerException if host is null
      */
     public CmdClient(String host, int port, char[] token) {
         Objects.requireNonNull(host);
@@ -95,23 +97,25 @@ public class CmdClient implements AutoCloseable {
      * Server's certificate must belong to the same chain as the one provided here,
      * otherwise the client will refuse to connect.
      *
-     * @param  host        host to connect to
-     * @param  port        target port
-     * @param  token       authorization token. It has to be the same token as used
-     *                     on the target server. Can be <code>null</code>
-     * @param  cert        validation certificate.
-     * @throws IOException when there was an error initializing SSLSocket from the
-     *                     provided certificate.
+     * @param  host                 host to connect to
+     * @param  port                 target port
+     * @param  token                authorization token. It has to be the same token
+     *                              as used on the target server. Can be
+     *                              <code>null</code>
+     * @param  cert                 validation certificate.
+     * @throws IOException          when there was an error initializing SSLSocket
+     *                              from the provided certificate.
+     * @throws NullPointerException if host or cert is null
      */
     public CmdClient(String host, int port, char[] token, Certificate cert) throws IOException {
         Objects.requireNonNull(host);
+        Objects.requireNonNull(cert);
         this.token = token == null ? new char[0] : token;
         this.cert = cert;
         this.host = host;
         this.port = port;
         try {
-            socket = cert == null ? new Socket()
-                    : SSLManager.mkSSLContext(cert, null).getSocketFactory().createSocket();
+            socket = SSLManager.mkSSLContext(cert, null).getSocketFactory().createSocket();
         } catch (
                 UnrecoverableKeyException |
                 KeyManagementException |
@@ -127,9 +131,11 @@ public class CmdClient implements AutoCloseable {
      * Add a listener to this client. <br>
      * Added listeners can't be removed afterwards.
      *
-     * @param listener
+     * @param  listener
+     * @throws NullPointerException is listener is null
      */
     public void addListener(ClientListener listener) {
+        Objects.requireNonNull(listener);
         listeners.add(listener);
     }
 
@@ -200,10 +206,12 @@ public class CmdClient implements AutoCloseable {
      * Sends a {@link DisconnectPacket} to the server and closes the underlying
      * connection.
      *
-     * @param  reason      plain text reason
-     * @throws IOException if there was an error closing the client.
+     * @param  reason               plain text reason
+     * @throws IOException          if there was an error closing the client.
+     * @throws NullPointerException if reason is null
      */
     public void disconnect(String reason) throws IOException {
+        Objects.requireNonNull(reason);
         try {
             sendPacket(new DisconnectPacket(reason));
         } catch (Exception e) {
@@ -269,22 +277,29 @@ public class CmdClient implements AutoCloseable {
     /**
      * Send a command request to the server.
      *
-     * @param  command     command name
-     * @param  arguments   command arguments
-     * @throws IOException if there was an error sending data packet to the server
+     * @param  command              command name
+     * @param  arguments            command arguments
+     * @throws IOException          if there was an error sending data packet to the
+     *                              server
+     * @throws NullPointerException if command or any of the arguments is null
      */
     public void sendCommand(String command, String... arguments) throws IOException {
+        Objects.requireNonNull(command);
+        Objects.requireNonNull(arguments);
+        for (String arg : arguments) Objects.requireNonNull(arg);
         sendPacket(new CommandPacket(command, arguments));
     }
 
     /**
-     * Send a raw packet to the server. It's not recommended to call this method
-     * manually.
+     * Send a raw packet to the server.
      *
-     * @param  packet      packet to send
-     * @throws IOException if there was an error sending data packet to the server
+     * @param  packet               packet to send
+     * @throws IOException          if there was an error sending data packet to the
+     *                              server
+     * @throws NullPointerException if packet is null
      */
     public void sendPacket(Packet packet) throws IOException {
+        Objects.requireNonNull(packet);
         if (!connected) throw new IllegalStateException("Not connected");
         packet.writeToStream(os);
     }

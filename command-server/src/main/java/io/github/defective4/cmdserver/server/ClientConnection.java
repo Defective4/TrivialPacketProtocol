@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.Objects;
 
 import io.github.defective4.cmdserver.common.packet.Packet;
 import io.github.defective4.cmdserver.common.packet.client.AuthPacket;
@@ -33,8 +34,11 @@ public class ClientConnection implements AutoCloseable {
      * @param  socket
      * @param  server
      * @throws IOException
+     * @throws NullPointerException if any of the arguments is null
      */
     protected ClientConnection(Socket socket, CmdServer server) throws IOException {
+        Objects.requireNonNull(socket);
+        Objects.requireNonNull(server);
         this.socket = socket;
         os = new DataOutputStream(socket.getOutputStream());
         is = new DataInputStream(socket.getInputStream());
@@ -81,21 +85,27 @@ public class ClientConnection implements AutoCloseable {
     /**
      * Send a command request to the client
      *
-     * @param  command     command name
-     * @param  args        command arguments
-     * @throws IOException when there was an error sending the packet
+     * @param  command              command name
+     * @param  args                 command arguments
+     * @throws IOException          when there was an error sending the packet
+     * @throws NullPointerException if command or any of the arguments is null
      */
     public void sendCommand(String command, String... args) throws IOException {
+        Objects.requireNonNull(command);
+        Objects.requireNonNull(args);
+        for (String arg : args) Objects.requireNonNull(arg);
         sendPacket(new CommandPacket(command, args));
     }
 
     /**
-     * Send a raw packet to the client. For internal use.
+     * Send a raw packet to the client.
      *
-     * @param  packet      packet to send
-     * @throws IOException when there was an error sending the packet
+     * @param  packet               packet to send
+     * @throws IOException          when there was an error sending the packet
+     * @throws NullPointerException if the packet is null
      */
     public void sendPacket(Packet packet) throws IOException {
+        Objects.requireNonNull(packet);
         packet.writeToStream(os);
     }
 

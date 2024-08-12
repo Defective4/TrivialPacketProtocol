@@ -13,6 +13,7 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.net.ssl.SSLContext;
@@ -85,10 +86,13 @@ public class CmdServer implements AutoCloseable {
      * @throws IOException
      * @throws UnrecoverableKeyException
      * @throws KeyManagementException
+     * @throws NullPointerException      if cert or key is null
      */
     public CmdServer(String host, int port, char[] token, Certificate cert, PrivateKey key)
             throws NoSuchAlgorithmException, KeyStoreException, CertificateException, IOException,
             UnrecoverableKeyException, KeyManagementException {
+        Objects.requireNonNull(cert);
+        Objects.requireNonNull(key);
         SSLContext context = SSLManager.mkSSLContext(cert, key);
         server = context.getServerSocketFactory().createServerSocket();
         this.port = port;
@@ -100,9 +104,11 @@ public class CmdServer implements AutoCloseable {
      * Add a listener to this server. <br>
      * Added listeners can't be removed.
      *
-     * @param listener listener to add
+     * @param  listener             listener to add
+     * @throws NullPointerException if listener is null
      */
     public void addListener(ServerListener listener) {
+        Objects.requireNonNull(listener);
         listeners.add(listener);
     }
 

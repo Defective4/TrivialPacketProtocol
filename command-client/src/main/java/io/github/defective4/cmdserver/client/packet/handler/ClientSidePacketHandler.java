@@ -1,5 +1,7 @@
 package io.github.defective4.cmdserver.client.packet.handler;
 
+import java.util.Objects;
+
 import io.github.defective4.cmdserver.client.CmdClient;
 import io.github.defective4.cmdserver.client.event.ClientListener;
 import io.github.defective4.cmdserver.common.packet.handler.PacketHandler;
@@ -20,9 +22,11 @@ public class ClientSidePacketHandler extends PacketHandler {
     /**
      * Constructs a new packet handler
      *
-     * @param client
+     * @param  client
+     * @throws NullPointerException if client is null
      */
     public ClientSidePacketHandler(CmdClient client) {
+        Objects.requireNonNull(client);
         this.client = client;
     }
 

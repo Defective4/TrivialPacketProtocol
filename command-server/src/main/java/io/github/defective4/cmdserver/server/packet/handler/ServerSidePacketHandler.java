@@ -1,6 +1,7 @@
 package io.github.defective4.cmdserver.server.packet.handler;
 
 import java.io.IOException;
+import java.util.Objects;
 
 import io.github.defective4.cmdserver.common.packet.handler.PacketHandler;
 import io.github.defective4.cmdserver.common.packet.handler.PacketReceiver;
@@ -20,7 +21,14 @@ public class ServerSidePacketHandler extends PacketHandler {
     private final ClientConnection connection;
     private final CmdServer server;
 
+    /**
+     * @param  connection
+     * @param  server
+     * @throws NullPointerException if connection or server is null
+     */
     public ServerSidePacketHandler(ClientConnection connection, CmdServer server) {
+        Objects.requireNonNull(connection);
+        Objects.requireNonNull(server);
         this.server = server;
         this.connection = connection;
     }
