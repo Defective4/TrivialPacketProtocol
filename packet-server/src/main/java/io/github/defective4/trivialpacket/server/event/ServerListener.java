@@ -1,5 +1,6 @@
 package io.github.defective4.trivialpacket.server.event;
 
+import io.github.defective4.trivialpacket.common.packet.Packet;
 import io.github.defective4.trivialpacket.server.ClientConnection;
 
 /**
@@ -28,7 +29,7 @@ public interface ServerListener {
 
     /**
      * Called when a client disconnects. <br>
-     * 
+     *
      * @param  connection client connection. Can be <code>null</code>
      * @throws Exception
      */
@@ -51,6 +52,14 @@ public interface ServerListener {
      * @throws Exception
      */
     void commandReceived(ClientConnection connection, String command, String[] args) throws Exception;
+
+    /**
+     * Called when a custom packet is received
+     *
+     * @param  packet    received packet
+     * @throws Exception
+     */
+    void customPacketReceived(Packet packet) throws Exception;
 
     /**
      * Called when a client responds to server's command

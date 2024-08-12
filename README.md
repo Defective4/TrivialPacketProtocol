@@ -112,3 +112,44 @@ public static void main(String[] args) {
 ```
 
 ## Defining custom packets
+
+### Step 0 - Setting up client and server projects
+Create two separate projects, one with `packet-client` dependency, and one with `packet-server`.
+
+### Step 1 - Creating a custom Packet class
+We will create a class that sends a single string from one end to another.  
+
+Write the following class:
+```java
+package io.github.defective4.trivialpacket.common.packet;
+
+public class ExamplePacket extends Packet {
+
+    private final String string;
+
+    public ExamplePacket(byte[] data) {
+        super(data);
+        this.string = new String(data);
+    }
+
+    public ExamplePacket(String string) {
+        this(string.getBytes());
+    }
+
+    public String getString() {
+        return string;
+    }
+
+}
+```
+and save it in **both** of your projects.  
+Notice there are two constructors. The first one is for the **receiving** end, taking raw bytes and parsing them into our desired format.  
+The second constructor is for **sending**. It takes our string and encodes it int raw bytes that can be sent over network.
+
+### Step 2 - Registering the Packet
+To use the packet we need to register it in the `PacketRegistry`.  
+Here's an example code:
+```java
+PacketRegistry.registerNewPacket(ExamplePacket.class);
+```
+do it in both of your projects.  

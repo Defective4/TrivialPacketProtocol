@@ -1,5 +1,6 @@
 package io.github.defective4.trivialpacket.client.event;
 
+import io.github.defective4.trivialpacket.common.packet.Packet;
 import io.github.defective4.trivialpacket.common.packet.twoway.DisconnectPacket;
 
 /**
@@ -12,6 +13,9 @@ public abstract class ClientAdapter implements ClientListener {
 
     @Override
     public void commandReceived(String command, String[] args) throws Exception {}
+
+    @Override
+    public void customPacketReceived(Packet packet) throws Exception {}
 
     @Override
     public void disconnected(DisconnectPacket packet) throws Exception {}

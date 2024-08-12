@@ -35,6 +35,15 @@ public class Packet {
     }
 
     /**
+     * Checks if this packet is built-in
+     *
+     * @return <code>true</code> if built-in
+     */
+    public boolean isBuiltIn() {
+        return PacketRegistry.isBuiltIn(getClass());
+    }
+
+    /**
      * Write the packet to stream
      *
      * @param  str                  output stream

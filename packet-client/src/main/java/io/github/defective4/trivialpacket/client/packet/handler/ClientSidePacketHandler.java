@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import io.github.defective4.trivialpacket.client.CmdClient;
 import io.github.defective4.trivialpacket.client.event.ClientListener;
+import io.github.defective4.trivialpacket.common.packet.Packet;
 import io.github.defective4.trivialpacket.common.packet.handler.PacketHandler;
 import io.github.defective4.trivialpacket.common.packet.handler.PacketReceiver;
 import io.github.defective4.trivialpacket.common.packet.twoway.CommandPacket;
@@ -53,4 +54,10 @@ public class ClientSidePacketHandler extends PacketHandler {
     public void onResponse(CommandResponsePacket e) throws Exception {
         for (ClientListener ls : client.getListeners()) ls.responseReceived(e.getData());
     }
+
+    @Override
+    protected void customPacketReceived(Packet packet) throws Exception {
+        for (ClientListener ls : client.getListeners()) ls.customPacketReceived(packet);
+    }
+
 }

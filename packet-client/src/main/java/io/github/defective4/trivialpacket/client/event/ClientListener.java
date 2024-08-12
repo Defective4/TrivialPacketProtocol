@@ -1,6 +1,7 @@
 package io.github.defective4.trivialpacket.client.event;
 
 import io.github.defective4.trivialpacket.client.CmdClient;
+import io.github.defective4.trivialpacket.common.packet.Packet;
 import io.github.defective4.trivialpacket.common.packet.twoway.DisconnectPacket;
 
 /**
@@ -24,6 +25,14 @@ public interface ClientListener {
      * @throws Exception
      */
     void commandReceived(String command, String[] args) throws Exception;
+
+    /**
+     * Called when a custom packet is received
+     *
+     * @param  packet    received packet
+     * @throws Exception
+     */
+    void customPacketReceived(Packet packet) throws Exception;
 
     /**
      * Called when the server sends a {@link DisconnectPacket}. <br>

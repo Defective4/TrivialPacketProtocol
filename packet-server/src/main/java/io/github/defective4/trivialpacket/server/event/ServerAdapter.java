@@ -1,5 +1,6 @@
 package io.github.defective4.trivialpacket.server.event;
 
+import io.github.defective4.trivialpacket.common.packet.Packet;
 import io.github.defective4.trivialpacket.server.ClientConnection;
 
 /**
@@ -21,6 +22,9 @@ public abstract class ServerAdapter implements ServerListener {
 
     @Override
     public void commandReceived(ClientConnection connection, String command, String[] args) throws Exception {}
+
+    @Override
+    public void customPacketReceived(Packet packet) throws Exception {}
 
     @Override
     public void responseReceived(ClientConnection connection, byte[] data) throws Exception {}
