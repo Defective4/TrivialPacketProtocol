@@ -125,39 +125,51 @@ Write the following class:
 ```java
 package io.github.defective4.trivialpacket.common.packet;
 
-public class ExamplePacket extends Packet {
+public static class ExamplePacket extends Packet {
 
     private final String string;
 
-    public ExamplePacket(byte[] data) {
-        super(data);
-        this.string = new String(data);
-    }
-
     public ExamplePacket(String string) {
-        this(string.getBytes());
+        this.string = string;
     }
 
     public String getString() {
         return string;
     }
 
+    @Override
+    protected void writePacketData(DataOutputStream str) throws IOException {
+        str.write(string.getBytes());
+    }
 }
 ```
 and save it in **both** of your projects.  
-Notice there are two constructors. The first one is for the **receiving** end, taking raw bytes and parsing them into our desired format.  
-The second constructor is for **sending**. It takes our string and encodes it int raw bytes that can be sent over network.
+Notice the `writePacketData` method. It writes our packet's data to a buffer, that later gets sent to the second end.
 
-### Step 2 - Registering the Packet
-To use the packet we need to register it in the `PacketRegistry`.  
+### Step 2 - Creating a factory for our packet
+We need to create a packet factory, that will convert received `byte[]` data to fields used by our packet.
+```java
+public static final PacketFactory<ExamplePacket> FACTORY = new PacketFactory<>(ExamplePacket.class) {
+
+    @Override
+    protected ExamplePacket createPacket(byte[] data) throws Exception {
+        return new ExamplePacket(new String(data));
+    }
+};
+```
+
+### Step 3 - Registering the factory
+To use the packet we need to register it in the `PacketFactoryRegistry`.  
 Here's an example code:
 ```java
-PacketRegistry.registerNewPacket(ExamplePacket.class);
+PacketFactoryRegistry.registerPacketFactory(6, FACTORY);
 ```
-do it in both of your projects.  
+do it in both of your projects. 
+Notice the `6` - it's the **unique ID** of our packet. It can be anything, as long as it does not clash with any other packets, including the built-in ones.  
+Built-in packets occupy the ID range from 0 to 5 at the time of writing.  
+The ID itself does not matter for us, but it has to be kept the same between the server and the client.
 
-### Step 3 - Use the packet
-
+### Step 4 - Using the packet
 Code for the server:
 ```java
 try(CmdServer server = new CmdServer("localhost", 8083, null)) {

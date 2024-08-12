@@ -38,7 +38,6 @@ public class CustomPacketExample {
         protected void writePacketData(DataOutputStream str) throws IOException {
             str.write(string.getBytes());
         }
-
     }
 
     public static void main(String[] args) {
