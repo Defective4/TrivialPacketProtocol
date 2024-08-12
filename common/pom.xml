@@ -3,7 +3,7 @@
   <parent>
     <groupId>io.github.defective4.trivialpacket</groupId>
     <artifactId>trivial-packet-protocol</artifactId>
-    <version>1.0</version>
+    <version>1.1</version>
   </parent>
   <artifactId>common</artifactId>
 </project>
