@@ -39,7 +39,28 @@ Currently the only requirement to use the library is Java 17
 
 ## Installation
 ### From Maven
-*Soon™* - waiting for publishing to maven central
+Add this to the `dependencies` section of your `pom.xml`:
+**Server**
+```xml
+<dependency>
+    <groupId>io.github.defective4.trivialpacket</groupId>
+    <artifactId>packet-server</artifactId>
+    <version>{latest version}</version>
+</dependency>
+```
+
+**Client**
+```xml
+<dependency>
+    <groupId>io.github.defective4.trivialpacket</groupId>
+    <artifactId>packet-client</artifactId>
+    <version>{latest version}</version>
+</dependency>
+```
+
+Where `{latest version}` is:  
+  
+![Maven Central Version](https://img.shields.io/maven-central/v/io.github.defective4.trivialpacket/trivial-packet-protocol)
 
 ### From releases
 You can download the common, client and/or server jars from [Releases](https://github.com/Defective4/TrivialPacketProtocol/releases/latest) 
